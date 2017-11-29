@@ -1,3 +1,0 @@
-spring.rabbitmq.addresses: ${vcap.services.docssleuth-rabbitmq.credentials.uri}
-
-logging.pattern.level: "%clr(%5p) %clr([${spring.application.name:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-B3-ParentSpanId:-},%X{X-Span-Export:-}]){yellow}"

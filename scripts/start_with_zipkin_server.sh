@@ -53,7 +53,7 @@ docker-compose build
 docker-compose up -d
 
 echo -e "\nStarting Zipkin Server..."
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/build/libs/*.jar > build/zipkin-server.out &
+nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > build/zipkin-server.out &
 
 echo -e "\nStarting the apps..."
 nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
