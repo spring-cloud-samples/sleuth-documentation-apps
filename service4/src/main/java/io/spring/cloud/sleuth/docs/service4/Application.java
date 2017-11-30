@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class Application {
 	public String service4MethodInController() throws InterruptedException {
 		Thread.sleep(400);
 		log.info("Hello from service4");
-		log.info("Service4: Baggage for [foo] is [" + tracer.getCurrentSpan().getBaggageItem("foo") + "]");
+		log.info("Service4: Baggage for [key] is [" + tracer.getCurrentSpan().getBaggageItem("key") + "]");
 		return "Hello from service4";
 	}
 

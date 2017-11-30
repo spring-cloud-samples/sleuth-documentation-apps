@@ -1,0 +1,12 @@
+cd service1
+cf push
+cd ..
+cd service2
+cf push
+cd ..
+cd service3
+cf push
+cd ..
+cd service4
+cf push
+

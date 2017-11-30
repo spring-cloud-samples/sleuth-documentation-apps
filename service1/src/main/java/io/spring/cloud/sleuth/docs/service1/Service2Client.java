@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.cloud.sleuth.annotation.SpanTag;
@@ -34,18 +35,23 @@ class Service2Client {
 
 	public String start() throws InterruptedException {
 		log.info("Hello from service1. Setting baggage foo=>bar");
-		String secretBaggage = tracer.getCurrentSpan().getBaggageItem("baggage");
+		Span span = tracer.getCurrentSpan();
+		String secretBaggage = span.getBaggageItem("baggage");
 		log.info("Super secret baggage item for key [baggage] is [{}]", secretBaggage);
 		if (StringUtils.hasText(secretBaggage)) {
-			tracer.getCurrentSpan().logEvent("secret_baggage_received");
+			span.logEvent("secret_baggage_received");
 			tracer.addTag("baggage", secretBaggage);
 		}
-		tracer.getCurrentSpan().setBaggageItem("foo", "bar");
+		String baggageKey = "key";
+		String baggageValue = "foo";
+		span.setBaggageItem(baggageKey, baggageValue);
+		span.logEvent("baggage_set");
+		tracer.addTag(baggageKey, baggageValue);
 		log.info("Hello from service1. Calling service2");
 		String response = restTemplate.getForObject("http://" + serviceAddress + "/foo", String.class);
 		Thread.sleep(100);
 		log.info("Got response from service2 [{}]", response);
-		log.info("Service1: Baggage for [foo] is [" + tracer.getCurrentSpan().getBaggageItem("foo") + "]");
+		log.info("Service1: Baggage for [key] is [" + span.getBaggageItem("key") + "]");
 		return response;
 	}
 

@@ -1,13 +1,17 @@
----
 applications:
-- name: docssleuth-zipkin-server
+- name: zipkin-server-v2
   memory: 1024M
   instances: 1
-  host: docssleuth-zipkin-server
-  path: build/libs/zipkin-server-1.0.0.SLEUTH_DOCS.jar
+  host: zipkin-server
+  path: zipkin-server-2.4.0-exec.jar
   services:
-    - docssleuth-rabbitmq
-    - docssleuth-mysql
+    - rabbitmq-sleuth-rk
+    - mysql-sleuth-rk
   env:
     SPRING_PROFILES_ACTIVE: cloud
     DEBUG: "true"
+    #RABBIT_ADDRESSES: ${vcap.services.rabbitmq-sleuth-rk-new.credentials.uri}
+    RABBIT_ADDRESSES: elephant.rmq.cloudamqp.com
+    RABBIT_USER: jxwoaass
+    RABBIT_PASSWORD: 6FpvRb22XVwNZQsDH6aA-KEBFlGkWAuV
+    RABBIT_VIRTUAL_HOST: jxwoaass
