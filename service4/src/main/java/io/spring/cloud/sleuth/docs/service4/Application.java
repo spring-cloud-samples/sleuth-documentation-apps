@@ -24,7 +24,7 @@ public class Application {
 	public String service4MethodInController() throws InterruptedException {
 		Thread.sleep(400);
 		log.info("Hello from service4");
-		log.info("Service4: Baggage for [foo] is [" + tracer.getCurrentSpan().getBaggageItem("foo") + "]");
+		log.info("Service4: Baggage for [key] is [" + tracer.getCurrentSpan().getBaggageItem("key") + "]");
 		return "Hello from service4";
 	}
 

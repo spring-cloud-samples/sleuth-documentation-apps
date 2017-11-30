@@ -51,7 +51,7 @@ class Service2Client {
 		String response = restTemplate.getForObject("http://" + serviceAddress + "/foo", String.class);
 		Thread.sleep(100);
 		log.info("Got response from service2 [{}]", response);
-		log.info("Service1: Baggage for [foo] is [" + span.getBaggageItem("foo") + "]");
+		log.info("Service1: Baggage for [key] is [" + span.getBaggageItem("key") + "]");
 		return response;
 	}
 

@@ -8,10 +8,10 @@ DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
 ./gradlew acceptanceTests --parallel
 
 TESTS_PASSED="no"
-grep "Service1: Baggage for \[foo\] is \[bar\]" build/service1.log &&
-grep "Service2: Baggage for \[foo\] is \[bar\]" build/service2.log &&
-grep "Service3: Baggage for \[foo\] is \[bar\]" build/service3.log &&
-grep "Service4: Baggage for \[foo\] is \[bar\]" build/service4.log &&
+grep "Service1: Baggage for \[key\] is \[foo\]" build/service1.log &&
+grep "Service2: Baggage for \[key\] is \[foo\]" build/service2.log &&
+grep "Service3: Baggage for \[key\] is \[foo\]" build/service3.log &&
+grep "Service4: Baggage for \[key\] is \[foo\]" build/service4.log &&
 TESTS_PASSED="yes" && echo "Baggage works fine!"
 
 # Check the result of tests execution

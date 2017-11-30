@@ -12,6 +12,10 @@ SERVICE2_PORT="${SERVICE2_PORT:-8082}"
 SERVICE3_PORT="${SERVICE3_PORT:-8083}"
 SERVICE4_PORT="${SERVICE4_PORT:-8084}"
 ZIPKIN_PORT="${ZIPKIN_PORT:-9411}"
+JAVA_PATH_TO_BIN="${JAVA_HOME}/bin/"
+if [[ -z "${JAVA_HOME}" ]] ; then
+    JAVA_PATH_TO_BIN=""
+fi
 
 [[ -z "${MEM_ARGS}" ]] && MEM_ARGS="-Xmx128m -Xss1024k"
 
@@ -52,14 +56,22 @@ docker-compose kill
 docker-compose build
 docker-compose up -d
 
+echo -e "\nDownloading Zipkin Server"
+# nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > build/zipkin-server.out &
+pushd zipkin-server
+mkdir -p build
+cd build
+[ -f "zipkin.jar" ] && echo "Zipkin server already downloaded" || curl -sSL https://zipkin.io/quickstart.sh | bash -s
+popd
+
 echo -e "\nStarting Zipkin Server..."
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > build/zipkin-server.out &
+nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} -DRABBIT_ADDRESSES=localhost:9672 ${MEM_ARGS} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service2/build/libs/*.jar > build/service2.log &
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service3/build/libs/*.jar > build/service3.log &
-nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service4/build/libs/*.jar > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
+nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service2/build/libs/*.jar > build/service2.log &
+nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service3/build/libs/*.jar > build/service3.log &
+nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service4/build/libs/*.jar > build/service4.log &
 
 echo -e "\n\nChecking if Zipkin is alive"
 check_app ${ZIPKIN_PORT}

@@ -23,7 +23,7 @@ public class Application {
 	public String service3MethodInController() throws InterruptedException {
 		Thread.sleep(300);
 		log.info("Hello from service3");
-		log.info("Service3: Baggage for [foo] is [" + tracer.getCurrentSpan().getBaggageItem("foo") + "]");
+		log.info("Service3: Baggage for [key] is [" + tracer.getCurrentSpan().getBaggageItem("key") + "]");
 		return "Hello from service3";
 	}
 

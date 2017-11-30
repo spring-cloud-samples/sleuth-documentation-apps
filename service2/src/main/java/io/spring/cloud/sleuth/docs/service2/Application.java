@@ -35,7 +35,7 @@ public class Application {
 	@RequestMapping("/foo")
 	public String service2MethodInController() throws InterruptedException {
 		Thread.sleep(200);
-		log.info("Service2: Baggage for [foo] is [" + tracer.getCurrentSpan().getBaggageItem("foo") + "]");
+		log.info("Service2: Baggage for [key] is [" + tracer.getCurrentSpan().getBaggageItem("key") + "]");
 		log.info("Hello from service2. Calling service3 and then service4");
 		String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);
 		log.info("Got response from service3 [{}]", service3);
