@@ -1,5 +1,5 @@
 applications:
-- name: zipkin-server-v2
+- name: docssleuth-zipkin-server
   memory: 1024M
   instances: 1
   host: docssleuth-zipkin-server
