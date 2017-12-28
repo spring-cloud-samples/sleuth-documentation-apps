@@ -213,7 +213,7 @@ class MessageFlowSpec extends Specification {
 	}
 
 	ResponseEntity<String> checkDependencies() {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: zipkinQparsedZipkinQuery()}:${zipkinQueryPort}/api/v1/dependencies?endTs=${System.currentTimeMillis()}")
+		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v1/dependencies?endTs=${System.currentTimeMillis()}")
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking the dependency graph")
 		return new ExceptionLoggingRestTemplate().exchange(
