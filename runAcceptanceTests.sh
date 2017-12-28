@@ -102,6 +102,12 @@ cd $root/$zq
 reset $ZQ_APP_NAME
 cf d -f $ZQ_APP_NAME
 cd $root/zipkin-server
+
+if [ -f "zipkin.jar" ]
+    curl -sSL https://zipkin.io/quickstart.sh | bash -s
+else
+    echo "Zipkin was downloaded - will continue"
+fi
 cf push && READY_FOR_TESTS="yes"
 
 if [[ "${READY_FOR_TESTS}" == "no" ]] ; then
