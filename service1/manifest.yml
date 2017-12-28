@@ -3,13 +3,12 @@ applications:
 - name: docssleuth-service1
   memory: 1024m
   instances: 1
-  host: service1-rk
+  host: docssleuth-service1
   path: build/libs/service1-1.0.0.SLEUTH_DOCS.jar
   services:
-    - rabbitmq-sleuth-rk
+    - docssleuth-rabbitmq
   env:
     SPRING_PROFILES_ACTIVE: cloud
     SERVICE2_ADDRESS: service2-rk.cfapps.io
-    SPRING_RABBITMQ_ADDRESSES: ${vcap.services.rabbitmq-sleuth-rk.credentials.uri}
+    SPRING_RABBITMQ_ADDRESSES: ${vcap.services.docssleuth-rabbitmq.credentials.uri}
     DEBUG: "true"
-

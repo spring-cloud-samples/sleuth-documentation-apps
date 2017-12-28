@@ -5,12 +5,12 @@ applications:
   host: zipkin-server
   path: zipkin-server-2.4.0-exec.jar
   services:
-    - rabbitmq-sleuth-rk
+    - docssleuth-rabbitmq
     - mysql-sleuth-rk
   env:
     SPRING_PROFILES_ACTIVE: cloud
     DEBUG: "true"
-    #RABBIT_ADDRESSES: ${vcap.services.rabbitmq-sleuth-rk-new.credentials.uri}
+    #RABBIT_ADDRESSES: ${vcap.services.docssleuth-rabbitmq-new.credentials.uri}
     RABBIT_ADDRESSES: elephant.rmq.cloudamqp.com
     RABBIT_USER: jxwoaass
     RABBIT_PASSWORD: 6FpvRb22XVwNZQsDH6aA-KEBFlGkWAuV

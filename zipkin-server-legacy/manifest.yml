@@ -6,7 +6,7 @@ applications:
   host: zipkin-server-rk
   path: build/libs/zipkin-server-1.0.0.SLEUTH_DOCS.jar
   services:
-    - rabbitmq-sleuth-rk
+    - docssleuth-rabbitmq
     - mysql-sleuth-rk
   env:
     SPRING_PROFILES_ACTIVE: cloud
