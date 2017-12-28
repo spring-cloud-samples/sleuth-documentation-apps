@@ -3,11 +3,12 @@ applications:
 - name: docssleuth-zipkin-server
   memory: 1024M
   instances: 1
-  host: zipkin-server-rk
+  host: docssleuth-zipkin-server
   path: build/libs/zipkin-server-1.0.0.SLEUTH_DOCS.jar
   services:
     - docssleuth-rabbitmq
-    - mysql-sleuth-rk
+    - docssleuth-mysql
+    #- mysql-sleuth-rk
   env:
     SPRING_PROFILES_ACTIVE: cloud
     DEBUG: "true"
