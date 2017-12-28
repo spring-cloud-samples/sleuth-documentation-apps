@@ -104,9 +104,9 @@ cf d -f $ZQ_APP_NAME
 cd $root/zipkin-server
 
 if [ -f "zipkin.jar" ]; then
-    curl -sSL https://zipkin.io/quickstart.sh | bash -s
-else
     echo "Zipkin was downloaded - will continue"
+else
+    curl -sSL https://zipkin.io/quickstart.sh | bash -s
 fi
 cf push && READY_FOR_TESTS="yes"
 
