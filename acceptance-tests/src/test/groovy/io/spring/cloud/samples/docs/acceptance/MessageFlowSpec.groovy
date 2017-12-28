@@ -178,8 +178,12 @@ class MessageFlowSpec extends Specification {
 		})
 	}
 
+	private String parsedZipkinQuery() {
+		return zipkinQueryUrl.split(" ")[0]
+	}
+
 	ResponseEntity<String> checkStateOfTheTraceId(String traceId) {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: zipkinQueryUrl}:${zipkinQueryPort}/api/v1/trace/$traceId")
+		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v1/trace/$traceId")
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking presence of trace id [$traceId]")
 		return new ExceptionLoggingRestTemplate().exchange(
@@ -209,7 +213,7 @@ class MessageFlowSpec extends Specification {
 	}
 
 	ResponseEntity<String> checkDependencies() {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: zipkinQueryUrl}:${zipkinQueryPort}/api/v1/dependencies?endTs=${System.currentTimeMillis()}")
+		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: zipkinQparsedZipkinQuery()}:${zipkinQueryPort}/api/v1/dependencies?endTs=${System.currentTimeMillis()}")
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking the dependency graph")
 		return new ExceptionLoggingRestTemplate().exchange(
@@ -220,6 +224,7 @@ class MessageFlowSpec extends Specification {
 	String wrapQueryWithProtocolIfPresent() {
 		String zipkinUrlFromEnvs = System.getenv('spring.zipkin.query.url')
 		if (zipkinUrlFromEnvs) {
+			zipkinUrlFromEnvs = zipkinUrlFromEnvs.split(" ")[0]
 			return "http://$zipkinUrlFromEnvs"
 		}
 		return zipkinUrlFromEnvs
