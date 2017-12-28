@@ -9,6 +9,6 @@ applications:
     - docssleuth-rabbitmq
   env:
     SPRING_PROFILES_ACTIVE: cloud
-    SERVICE2_ADDRESS: service2-rk.cfapps.io
+    SERVICE2_ADDRESS: docssleuth-service2.cfapps.io
     SPRING_RABBITMQ_ADDRESSES: ${vcap.services.docssleuth-rabbitmq.credentials.uri}
     DEBUG: "true"
