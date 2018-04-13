@@ -2,12 +2,25 @@
 
 set -o errexit
 
-KILL_AT_END="${KILL_AT_END:-yes}"
+export CURRENT_DIR="$( pwd )"
+export KILL_AT_END="${KILL_AT_END:-yes}"
+# since 8081-8084 are often taken will bump those to 9081-9084
+export DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
+export SERVICE1_PORT="${SERVICE1_PORT:-9081}"
+export SERVICE1_ADDRESS="${SERVICE1_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE1_PORT}}"
+export SERVICE2_PORT="${SERVICE2_PORT:-9082}"
+export SERVICE2_ADDRESS="${SERVICE2_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE2_PORT}}"
+export SERVICE3_PORT="${SERVICE3_PORT:-9083}"
+export SERVICE3_ADDRESS="${SERVICE3_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE3_PORT}}"
+export SERVICE4_PORT="${SERVICE4_PORT:-9084}"
+export SERVICE4_ADDRESS="${SERVICE4_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE4_PORT}}"
+
+echo -e "\n\nRunning apps on addresses:\nservice1: [${SERVICE1_ADDRESS}]\nservice2: [${SERVICE2_ADDRESS}]\nservice3: [${SERVICE3_ADDRESS}]\nservice4: [${SERVICE4_ADDRESS}]\n\n"
 
 function print_logs() {
     echo -e "\n\nSOMETHING WENT WRONG :( :( \n\n"
     echo -e "\n\nPRINTING LOGS FROM ALL APPS\n\n"
-    tail -n +1 -- /build/*.log
+    tail -n +1 -- "${CURRENT_DIR}"/build/*.log
 }
 
 function fail_with_message() {

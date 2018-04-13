@@ -4,4 +4,6 @@ set -e
 
 echo -e "Sending a request to service1"
 
-curl --fail localhost:8081/readtimeout
+SERVICE1_PORT="${SERVICE1_PORT:-8081}"
+
+curl --fail localhost:${SERVICE1_PORT}/readtimeout

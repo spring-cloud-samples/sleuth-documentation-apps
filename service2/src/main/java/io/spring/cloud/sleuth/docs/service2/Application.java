@@ -104,6 +104,8 @@ class Service2Controller {
 		} catch (Exception e) {
 			log.error("Exception occurred while trying to send a request to a missing service", e);
 			throw e;
+		} finally {
+			span.finish();
 		}
 	}
 

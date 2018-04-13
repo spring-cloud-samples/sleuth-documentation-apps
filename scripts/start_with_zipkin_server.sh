@@ -78,10 +78,10 @@ echo -e "\nStarting Zipkin Server..."
 nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/build/libs/*.jar > build/service2.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/build/libs/*.jar > build/service3.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/build/libs/*.jar > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/build/libs/*.jar --server.port="${SERVICE1_PORT}"  > build/service1.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/build/libs/*.jar --server.port="${SERVICE2_PORT}"  > build/service2.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/build/libs/*.jar --server.port="${SERVICE3_PORT}"  > build/service3.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/build/libs/*.jar --server.port="${SERVICE4_PORT}"  > build/service4.log &
 
 echo -e "\n\nChecking if Zipkin is alive"
 check_app ${ZIPKIN_PORT}

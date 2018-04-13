@@ -44,7 +44,7 @@ class MessageFlowSpec extends Specification {
 	public static final String SPAN_ID_NAME = "X-B3-SpanId"
 	private static final List<String> APP_NAMES = ['service1', 'service2', 'service3', 'service4']
 
-	@Value('${serviceUrl:http://localhost:8081}') String service1Url
+	@Value('${service1.address:localhost:8081}') String service1Url
 	@Value('${zipkin.query.port:9411}') Integer zipkinQueryPort
 	@Value('${LOCAL_URL:http://localhost}') String zipkinQueryUrl
 
@@ -104,7 +104,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("$service1Url/start")
+		URI uri = URI.create("http://$service1Url/start")
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
@@ -114,7 +114,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("$service1Url/readtimeout")
+		URI uri = URI.create("http://$service1Url/readtimeout")
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
