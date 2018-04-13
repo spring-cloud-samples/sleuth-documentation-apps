@@ -20,7 +20,7 @@ public class Service1Controller {
 	}
 
 	@RequestMapping("/readtimeout")
-	public String timeout() throws InterruptedException {
+	public String timeout() {
 		return service2Client.timeout(LocalDateTime.now().toString());
 	}
 }

@@ -18,10 +18,10 @@ package io.spring.cloud.samples.docs.acceptance
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
 import io.spring.cloud.samples.docs.acceptance.common.tech.ExceptionLoggingRestTemplate
+import io.spring.cloud.samples.docs.acceptance.common.tech.SpanUtil
 import io.spring.cloud.samples.docs.acceptance.common.tech.TestConfiguration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootContextLoader
-import org.springframework.cloud.sleuth.Span
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -35,13 +35,13 @@ import zipkin.Codec
 
 import static org.awaitility.Awaitility.await
 import static java.util.concurrent.TimeUnit.SECONDS
-import static org.springframework.cloud.sleuth.Span.SPAN_ID_NAME
 
 @ContextConfiguration(classes = TestConfiguration, loader = SpringBootContextLoader)
 @Slf4j
 class MessageFlowSpec extends Specification {
 
-	public static final String TRACE_ID_HEADER_NAME = Span.TRACE_ID_NAME
+	public static final String TRACE_ID_HEADER_NAME = "X-B3-TraceId"
+	public static final String SPAN_ID_NAME = "X-B3-SpanId"
 	private static final List<String> APP_NAMES = ['service1', 'service2', 'service3', 'service4']
 
 	@Value('${serviceUrl:http://localhost:8081}') String service1Url
@@ -59,7 +59,7 @@ class MessageFlowSpec extends Specification {
 		and: "The dependency graph looks like in the docs"
 			dependency_graph_is_correct()
 		where:
-			traceId = Span.idToHex(new Random().nextLong())
+			traceId = SpanUtil.idToHex(new Random().nextLong())
 	}
 
 	@Unroll
@@ -71,7 +71,7 @@ class MessageFlowSpec extends Specification {
 		then: "Entry in Zipkin is present for the traceId"
 			failed_entry_for_trace_id_is_present_in_Zipkin(traceId)
 		where:
-			traceId = Span.idToHex(new Random().nextLong())
+			traceId = SpanUtil.idToHex(new Random().nextLong())
 	}
 
 	private request_sent_for_service1_with_traceId( RequestEntity request) {

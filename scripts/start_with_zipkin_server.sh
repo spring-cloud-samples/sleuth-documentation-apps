@@ -4,7 +4,8 @@ set -e
 
 RABBIT_PORT=${RABBIT_PORT:-9672}
 DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
-DEFAULT_ARGS="-DSPRING_RABBITMQ_HOST=${DEFAULT_HEALTH_HOST} -DSPRING_RABBITMQ_PORT=${RABBIT_PORT}"
+export SPRING_RABBITMQ_HOST="${DEFAULT_HEALTH_HOST}"
+export SPRING_RABBITMQ_PORT="${RABBIT_PORT}"
 WAIT_TIME="${WAIT_TIME:-5}"
 RETRIES="${RETRIES:-30}"
 SERVICE1_PORT="${SERVICE1_PORT:-8081}"
@@ -53,8 +54,12 @@ function curl_health_endpoint() {
 
 # run zipkin stuff
 docker-compose kill
-docker-compose build
+docker-compose pull
 docker-compose up -d
+
+echo -e "\n\nWaiting for 10 seconds for rabbit to start"
+sleep 10
+
 if [[ "${JAVA_HOME}" != "" ]]; then
   JAVA_BIN="${JAVA_HOME}/bin/java"
 else
@@ -70,13 +75,13 @@ cd build
 popd
 
 echo -e "\nStarting Zipkin Server..."
-nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} -DRABBIT_ADDRESSES=localhost:9672 ${MEM_ARGS} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
-nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service2/build/libs/*.jar > build/service2.log &
-nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service3/build/libs/*.jar > build/service3.log &
-nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} ${MEM_ARGS} -jar service4/build/libs/*.jar > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/build/libs/*.jar > build/service1.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/build/libs/*.jar > build/service2.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/build/libs/*.jar > build/service3.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/build/libs/*.jar > build/service4.log &
 
 echo -e "\n\nChecking if Zipkin is alive"
 check_app ${ZIPKIN_PORT}

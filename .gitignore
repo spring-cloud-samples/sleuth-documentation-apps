@@ -21,3 +21,4 @@ build/
 zipkin.jar
 zipkin.jar.asc
 zipkin.jar.md5.asc
+out/

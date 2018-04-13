@@ -4,6 +4,13 @@ spring:
     name: service1
   sleuth:
     sampler:
-      percentage: 1.0
+      probability: 1.0
+    # you have to explicitly provide baggage keys
+    baggage-keys:
+      - baggage
+      - key
 
 logging.level.org.springframework.cloud.sleuth: DEBUG
+
+management.endpoints.web.base-path: /
+management.endpoints.web.exposure.include: "*"

@@ -2,6 +2,8 @@
 
 set -o errexit
 
+KILL_AT_END="${KILL_AT_END:-yes}"
+
 function print_logs() {
     echo -e "\n\nSOMETHING WENT WRONG :( :( \n\n"
     echo -e "\n\nPRINTING LOGS FROM ALL APPS\n\n"
@@ -13,6 +15,9 @@ function fail_with_message() {
     print_logs
     exit 1
 }
+
+export -f print_logs
+export -f fail_with_message
 
 # Kill the running apps
 ./scripts/kill.sh && echo "Killed some running apps" || echo "No apps were running"
@@ -31,4 +36,6 @@ echo -e "\n\nReady to curl a request that will cause an exception"
 echo -e "\n\nRunning acceptance tests"
 ./scripts/run_acceptance_tests.sh
 
-./scripts/kill.sh
+if [[ "${KILL_AT_END}" == "yes" ]] ; then
+    ./scripts/kill.sh
+fi
