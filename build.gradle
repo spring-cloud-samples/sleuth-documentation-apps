@@ -16,9 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
-        classpath "io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE"
-
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${BOOT_VERSION}"
     }
 }
 
@@ -32,7 +30,6 @@ configure(subprojects) {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     apply plugin: 'org.springframework.boot'
-    apply plugin: "io.spring.dependency-management"
 
     ext {
         systemPropsFromGradle = {
@@ -43,22 +40,7 @@ configure(subprojects) {
 
     group = 'io.spring.cloud.sleuth.docs'
     version = buildNrLoc
-
     sourceCompatibility = '1.8'
-
-    configurations {
-        all {
-            resolutionStrategy {
-                eachDependency { DependencyResolveDetails details ->
-                    // To prevent an accidental usage of groovy-all.jar and groovy.jar in different versions
-                    // all modularized Groovy jars are replaced with groovy-all.jar by default.
-                    if (details.requested.group == 'org.codehaus.groovy' && details.requested.name != "groovy-all") {
-                        details.useTarget("org.codehaus.groovy:groovy-all:${details.requested.version}")
-                    }
-                }
-            }
-        }
-    }
 
     repositories {
         mavenLocal()
@@ -78,13 +60,18 @@ configure(subprojects) {
     }
 
     dependencyManagement {
+        Closure<String> getProp = { String propName -> System.properties[propName] ?:
+            project.gradle.startParameter.systemPropertiesArgs.get(propName) ?:
+            hasProperty(propName) ? property(propName) :
+                    System.getenv(propName) ?: ""
+                }
         imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${project.findProperty('BOM_VERSION') ?: "Edgware.RELEASE"}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${getProp("BOM_VERSION") ?: "Edgware.BUILD-SNAPSHOT"}"
         }
     }
 
     wrapper {
-        gradleVersion '4.3.1'
+        gradleVersion '4.6.0'
     }
 
     bootRun {
@@ -167,4 +154,11 @@ configure(project(":acceptance-tests")) {
         description = "Runs the acceptance tests"
     }
 
+}
+
+String getProp(String propName) {
+    return System.properties[propName] ?:
+            project.gradle.startParameter.systemPropertiesArgs.get(propName) ?:
+                    hasProperty(propName) ? property(propName) :
+                            System.getenv(propName) ?: ""
 }
