@@ -6,6 +6,7 @@ RABBIT_PORT=${RABBIT_PORT:-9672}
 DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
 export SPRING_RABBITMQ_HOST="${DEFAULT_HEALTH_HOST}"
 export SPRING_RABBITMQ_PORT="${RABBIT_PORT}"
+WITH_RABBIT="${WITH_RABBIT:-yes}"
 WAIT_TIME="${WAIT_TIME:-5}"
 RETRIES="${RETRIES:-30}"
 SERVICE1_PORT="${SERVICE1_PORT:-8081}"
@@ -52,13 +53,14 @@ function curl_health_endpoint() {
 # build apps
 ./gradlew clean && ./gradlew build --parallel
 
-# run zipkin stuff
-docker-compose kill
-docker-compose pull
-docker-compose up -d
-
-echo -e "\n\nWaiting for 10 seconds for rabbit to start"
-sleep 10
+if [[ "${WITH_RABBIT}" == "yes" ]] ; then
+    # run rabbit
+    docker-compose kill
+    docker-compose pull
+    docker-compose up -d
+    echo -e "\n\nWaiting for 10 seconds for rabbit to start"
+    sleep 10
+fi
 
 if [[ "${JAVA_HOME}" != "" ]]; then
   JAVA_BIN="${JAVA_HOME}/bin/java"
@@ -75,7 +77,15 @@ cd build
 popd
 
 echo -e "\nStarting Zipkin Server..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
+
+if [[ "${WITH_RABBIT}" == "yes" ]] ; then
+    echo "Will use rabbit to send spans"
+    ZIPKIN_ARGS="-DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT}"
+else
+    echo "Will use web to send spans"
+    MEM_ARGS="${MEM_ARGS} -Dspring.zipkin.sender.type=WEB"
+fi
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} ${ZIPKIN_ARGS} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
 nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/build/libs/*.jar --server.port="${SERVICE1_PORT}"  > build/service1.log &
