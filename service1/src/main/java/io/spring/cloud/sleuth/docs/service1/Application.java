@@ -8,15 +8,13 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import zipkin2.reporter.Sender;
 
 @SpringBootApplication
 public class Application {
 
-	@Bean
-	RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
+	@Bean WebClient webClient() { return WebClient.create(); }
 
 	public static void main(String... args) {
 		new SpringApplication(Application.class).run(args);

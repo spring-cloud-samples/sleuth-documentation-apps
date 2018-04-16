@@ -45,6 +45,7 @@ configure(subprojects) {
 	repositories {
 		mavenLocal()
 		jcenter()
+		mavenCentral()
 		maven {
 			url "http://repo.spring.io/snapshot"
 		}
