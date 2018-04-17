@@ -54,8 +54,8 @@ function reset(){
 # ======================================= BUILD START =======================================
 root=`pwd`
 ./gradlew clean --parallel
-echo -e "\n\nPrinting dependencies"
-./gradlew allDeps
+#echo -e "\n\nPrinting dependencies"
+#./gradlew allDeps
 echo -e "\n\nBuilding builds in parallel"
 ./gradlew build --parallel --refresh-dependencies
 
@@ -67,9 +67,9 @@ echo -e "\n\nBuilding builds in parallel"
 echo -e "\nDeploying infrastructure apps\n\n"
 
 READY_FOR_TESTS="no"
-echo "Booting RabbitMQ"
 # create RabbitMQ
 APP_NAME="${CLOUD_PREFIX}-rabbitmq"
+echo "Booting RabbitMQ with name [${APP_NAME}]"
 cf s | grep ${APP_NAME} && echo "found ${APP_NAME}" && READY_FOR_TESTS="yes" ||
     cf cs cloudamqp lemur ${APP_NAME} && echo "Started RabbitMQ" && READY_FOR_TESTS="yes"
 
@@ -80,10 +80,10 @@ fi
 
 # ====================================================
 # Boot zipkin-stuff
-echo -e "\n\nBooting up MySQL"
 READY_FOR_TESTS="no"
 # create MySQL DB
 APP_NAME="${CLOUD_PREFIX}-mysql"
+echo -e "\n\nBooting up MySQL with name [${APP_NAME}]"
 cf s | grep ${APP_NAME} && echo "found ${APP_NAME}" && READY_FOR_TESTS="yes" ||
     cf cs cleardb spark ${APP_NAME} && echo "Started ${APP_NAME}" && READY_FOR_TESTS="yes"
 
@@ -102,11 +102,14 @@ cd $root/$zq
 reset $ZQ_APP_NAME
 cf d -f $ZQ_APP_NAME
 cd $root/zipkin-server
+mkdir -p build
+READY_FOR_TESTS="no"
 
-if [ -f "zipkin.jar" ]; then
+if [ -f "build/zipkin.jar" ]; then
     echo "Zipkin was downloaded - will continue"
 else
     curl -sSL https://zipkin.io/quickstart.sh | bash -s
+    mv zipkin.jar build/zipkin.jar
 fi
 cf push && READY_FOR_TESTS="yes"
 
@@ -140,7 +143,7 @@ echo -e "Zikpin server host is [${ZIPKIN_SERVER_HOST}]"
 echo -e "Running acceptance tests"
 
 cd $root
-ACCEPTANCE_TEST_OPTS="-DLOCAL_URL=http://${ZIPKIN_SERVER_HOST} -DserviceUrl=http://${SERVICE1_HOST} -Dzipkin.query.port=80"
+ACCEPTANCE_TEST_OPTS="-DLOCAL_URL=http://${ZIPKIN_SERVER_HOST} -Dservice1.address=http://${SERVICE1_HOST} -Dzipkin.query.port=80"
 echo -e "\n\nSetting test opts for sleuth stream to call ${ACCEPTANCE_TEST_OPTS}"
 ./gradlew :acceptance-tests:acceptanceTests "-DLOCAL_URL=http://${ZIPKIN_SERVER_HOST}" "-DserviceUrl=http://${SERVICE1_HOST}" "-Dzipkin.query.port=80" --stacktrace --no-daemon --configure-on-demand
 
