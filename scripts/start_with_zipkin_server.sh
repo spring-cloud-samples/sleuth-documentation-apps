@@ -69,12 +69,12 @@ else
   JAVA_BIN="java"
 fi
 
-echo -e "\nDownloading Zipkin Server"
 # nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > build/zipkin-server.out &
 pushd zipkin-server
 mkdir -p build
 cd build
 if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]
+  echo -e "\nDownloading Zipkin Server"
   rm -rf zipkin.jar || echo "No zipkin.jar to remove"
   curl -sSL https://zipkin.io/quickstart.sh | bash -s
 else
