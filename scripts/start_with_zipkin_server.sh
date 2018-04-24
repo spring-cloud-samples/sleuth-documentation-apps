@@ -18,6 +18,7 @@ JAVA_PATH_TO_BIN="${JAVA_HOME}/bin/"
 if [[ -z "${JAVA_HOME}" ]] ; then
     JAVA_PATH_TO_BIN=""
 fi
+DOWNLOAD_ZIPKIN="${DOWNLOAD_ZIPKIN:-true}"
 
 [[ -z "${MEM_ARGS}" ]] && MEM_ARGS="-Xmx128m -Xss1024k"
 
@@ -73,7 +74,12 @@ echo -e "\nDownloading Zipkin Server"
 pushd zipkin-server
 mkdir -p build
 cd build
-[ -f "zipkin.jar" ] && echo "Zipkin server already downloaded" || curl -sSL https://zipkin.io/quickstart.sh | bash -s
+if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]
+  rm -rf zipkin.jar || echo "No zipkin.jar to remove"
+  curl -sSL https://zipkin.io/quickstart.sh | bash -s
+else
+  echo "Won't download zipkin - the [DOWNLOAD_ZIPKIN] switch is set to false"
+fi
 popd
 
 echo -e "\nStarting Zipkin Server..."
