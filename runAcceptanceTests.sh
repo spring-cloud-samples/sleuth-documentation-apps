@@ -104,13 +104,18 @@ cf d -f $ZQ_APP_NAME
 cd $root/zipkin-server
 mkdir -p build
 READY_FOR_TESTS="no"
+DOWNLOAD_ZIPKIN="${DOWNLOAD_ZIPKIN:-true}"
 
-if [ -f "build/zipkin.jar" ]; then
-    echo "Zipkin was downloaded - will continue"
+pushd build
+if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]
+  echo -e "\nDownloading Zipkin Server"
+  rm -rf zipkin.jar || echo "No zipkin.jar to remove"
+  curl -sSL https://zipkin.io/quickstart.sh | bash -s
 else
-    curl -sSL https://zipkin.io/quickstart.sh | bash -s
-    mv zipkin.jar build/zipkin.jar
+  echo "Won't download zipkin - the [DOWNLOAD_ZIPKIN] switch is set to false"
 fi
+popd
+
 cf push && READY_FOR_TESTS="yes"
 
 if [[ "${READY_FOR_TESTS}" == "no" ]] ; then
