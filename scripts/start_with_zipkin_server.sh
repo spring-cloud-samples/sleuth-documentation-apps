@@ -73,7 +73,7 @@ fi
 pushd zipkin-server
 mkdir -p build
 cd build
-if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]
+if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]; then
   echo -e "\nDownloading Zipkin Server"
   rm -rf zipkin.jar || echo "No zipkin.jar to remove"
   curl -sSL https://zipkin.io/quickstart.sh | bash -s
