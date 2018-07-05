@@ -133,7 +133,7 @@ configure(project(":acceptance-tests")) {
 		testCompile "org.springframework:spring-web"
 		testCompile "org.springframework.boot:spring-boot-starter-web"
 		testCompile "org.springframework.cloud:spring-cloud-starter-sleuth"
-		testCompile "io.zipkin.java:zipkin:1.0.0"
+		testCompile "io.zipkin.java:zipkin:2.10.0"
 		testCompile('com.athaydes:spock-reports:1.2.13') {
 			transitive = false // this avoids affecting your version of Groovy/Spock
 		}
@@ -155,7 +155,6 @@ configure(project(":acceptance-tests")) {
 		group = "Verification"
 		description = "Runs the acceptance tests"
 	}
-
 }
 
 String getProp(String propName) {

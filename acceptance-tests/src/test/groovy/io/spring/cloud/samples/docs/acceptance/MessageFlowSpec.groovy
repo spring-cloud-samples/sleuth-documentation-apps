@@ -16,10 +16,14 @@
 package io.spring.cloud.samples.docs.acceptance
 
 import groovy.json.JsonSlurper
+import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import io.spring.cloud.samples.docs.acceptance.common.tech.ExceptionLoggingRestTemplate
 import io.spring.cloud.samples.docs.acceptance.common.tech.SpanUtil
 import io.spring.cloud.samples.docs.acceptance.common.tech.TestConfiguration
+import zipkin2.Span
+import zipkin2.codec.SpanBytesDecoder
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootContextLoader
 import org.springframework.http.HttpHeaders
@@ -31,7 +35,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.RestTemplate
 import spock.lang.Specification
 import spock.lang.Unroll
-import zipkin.Codec
 
 import static org.awaitility.Awaitility.await
 import static java.util.concurrent.TimeUnit.SECONDS
@@ -74,6 +77,7 @@ class MessageFlowSpec extends Specification {
 			traceId = SpanUtil.idToHex(new Random().nextLong())
 	}
 
+	@CompileStatic
 	private request_sent_for_service1_with_traceId( RequestEntity request) {
 		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
 			@Override
@@ -88,6 +92,7 @@ class MessageFlowSpec extends Specification {
 		})
 	}
 
+	@CompileStatic
 	private failing_request_sent_for_service1_with_traceId(RequestEntity request) {
 		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
 			@Override
@@ -100,6 +105,7 @@ class MessageFlowSpec extends Specification {
 		})
 	}
 
+	@CompileStatic
 	RequestEntity request_to_service1(String traceId) {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
@@ -110,6 +116,7 @@ class MessageFlowSpec extends Specification {
 		return requestEntity
 	}
 
+	@CompileStatic
 	RequestEntity request_to_service1_at_readtimeout(String traceId) {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
@@ -120,6 +127,7 @@ class MessageFlowSpec extends Specification {
 		return requestEntity
 	}
 
+	@CompileStatic
 	void entry_for_trace_id_is_present_in_Zipkin(String traceId) {
 		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
 			@Override
@@ -128,25 +136,27 @@ class MessageFlowSpec extends Specification {
 				log.info("Response from the Zipkin query service about the trace id [$response] for trace with id [$traceId]")
 				assert response.statusCode == HttpStatus.OK
 				assert response.hasBody()
-				List<zipkin.Span> spans = Codec.JSON.readSpans(response.body.bytes)
+				List<Span> spans = SpanBytesDecoder.JSON_V2.decodeList(response.body.bytes)
 				List<String> serviceNamesNotFoundInZipkin = serviceNamesNotFoundInZipkin(spans)
 				log.info("The following services were not found in Zipkin $serviceNamesNotFoundInZipkin")
 				assert serviceNamesNotFoundInZipkin.empty
 				log.info("Zipkin tracing is working! Sleuth is working! Let's be happy!")
 			}
 
-			private List<String> serviceNamesNotFoundInZipkin(List<zipkin.Span> spans) {
-				List<String> serviceNamesFoundInAnnotations = spans.collect {
-					it.annotations.endpoint.serviceName
+
+			private List<String> serviceNamesNotFoundInZipkin(List<Span> spans) {
+				List<String> remoteServiceName = spans.collect {
+					it.remoteServiceName()
 				}.flatten().unique()
-				List<String> serviceNamesFoundInBinaryAnnotations = spans.collect {
-					it.binaryAnnotations.endpoint.serviceName
+				List<String> localServiceName = spans.collect {
+					it.localServiceName()
 				}.flatten().unique()
-				return (APP_NAMES - serviceNamesFoundInAnnotations - serviceNamesFoundInBinaryAnnotations)
+				return (APP_NAMES - remoteServiceName - localServiceName)
 			}
 		})
 	}
 
+	@CompileStatic
 	void failed_entry_for_trace_id_is_present_in_Zipkin(String traceId) {
 		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
 			@Override
@@ -155,35 +165,37 @@ class MessageFlowSpec extends Specification {
 				log.info("Response from the Zipkin query service about the trace id [$response] for trace with id [$traceId]")
 				assert response.statusCode == HttpStatus.OK
 				assert response.hasBody()
-				List<zipkin.Span> spans = Codec.JSON.readSpans(response.body.bytes)
+				List<Span> spans = SpanBytesDecoder.JSON_V2.decodeList(response.body.bytes)
 				// we're checking if the latest annotation based functionality is working
-				zipkin.Span foundSpan = spans.find {
-					it.name == "first_span" && it.binaryAnnotations.find { it.key == "someTag"} &&
-							it.binaryAnnotations.find { it.key == "error"}
+				Span foundSpan = spans.find {
+					it.name() == "first_span" && it.tags().find { it.key == "someTag"} &&
+							it.tags().find { it.key == "error"}
 				}
 				log.info("The following spans <{}> were found in Zipkin for the traceid <{}>", spans, traceId)
 				assert foundSpan != null
 				log.info("Zipkin tracing is working! Sleuth is working! Let's be happy!")
 			}
 
-			private List<String> serviceNamesNotFoundInZipkin(List<zipkin.Span> spans) {
-				List<String> serviceNamesFoundInAnnotations = spans.collect {
-					it.annotations.endpoint.serviceName
+			private List<String> serviceNamesNotFoundInZipkin(List<Span> spans) {
+				List<String> remoteServiceName = spans.collect {
+					it.remoteServiceName()
 				}.flatten().unique()
-				List<String> serviceNamesFoundInBinaryAnnotations = spans.collect {
-					it.binaryAnnotations.endpoint.serviceName
+				List<String> localServiceName = spans.collect {
+					it.localServiceName()
 				}.flatten().unique()
-				return (APP_NAMES - serviceNamesFoundInAnnotations - serviceNamesFoundInBinaryAnnotations)
+				return (APP_NAMES - remoteServiceName - localServiceName)
 			}
 		})
 	}
 
+	@CompileStatic
 	private String parsedZipkinQuery() {
 		return zipkinQueryUrl.split(" ")[0]
 	}
 
+	@CompileStatic
 	ResponseEntity<String> checkStateOfTheTraceId(String traceId) {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v1/trace/$traceId")
+		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v2/trace/$traceId")
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking presence of trace id [$traceId]")
 		return new ExceptionLoggingRestTemplate().exchange(
@@ -212,8 +224,9 @@ class MessageFlowSpec extends Specification {
 		})
 	}
 
+	@CompileStatic
 	ResponseEntity<String> checkDependencies() {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v1/dependencies?endTs=${System.currentTimeMillis()}")
+		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v2/dependencies?endTs=${System.currentTimeMillis()}")
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking the dependency graph")
 		return new ExceptionLoggingRestTemplate().exchange(
@@ -221,6 +234,7 @@ class MessageFlowSpec extends Specification {
 		)
 	}
 
+	@CompileStatic
 	String wrapQueryWithProtocolIfPresent() {
 		String zipkinUrlFromEnvs = System.getenv('spring.zipkin.query.url')
 		if (zipkinUrlFromEnvs) {
@@ -230,7 +244,7 @@ class MessageFlowSpec extends Specification {
 		return zipkinUrlFromEnvs
 	}
 
-
+	@CompileStatic
 	RestTemplate restTemplate() {
 		return new ExceptionLoggingRestTemplate()
 	}
