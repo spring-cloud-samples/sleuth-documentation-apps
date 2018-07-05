@@ -69,6 +69,9 @@ cd build
 [ -f "zipkin.jar" ] && echo "Zipkin server already downloaded" || curl -sSL https://zipkin.io/quickstart.sh | bash -s
 popd
 
+echo -e "\nWaiting for 5 seconds for rabbit to work"
+sleep 5
+
 echo -e "\nStarting Zipkin Server..."
 nohup ${JAVA_PATH_TO_BIN}java ${DEFAULT_ARGS} -DRABBIT_ADDRESSES=localhost:9672 ${MEM_ARGS} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
 
