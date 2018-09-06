@@ -66,7 +66,7 @@ echo -e "\nDownloading Zipkin Server"
 pushd zipkin-server
 mkdir -p build
 cd build
-[ -f "zipkin.jar" ] && echo "Zipkin server already downloaded" || curl -sSL https://raw.githubusercontent.com/openzipkin/openzipkin.github.io/fe358ff87f0a84adc86b374d4149814d38ac95e4/quickstart.sh | bash -s
+[ -f "zipkin.jar" ] && echo "Zipkin server already downloaded" || curl -sSL https://zipkin.io/quickstart.sh | bash -s
 popd
 
 echo -e "\nWaiting for 5 seconds for rabbit to work"
