@@ -32,8 +32,12 @@ function fail_with_message() {
 export -f print_logs
 export -f fail_with_message
 
+if [[ "${KILL_AT_END}" == "yes" ]] ; then
+    trap "{ ./scripts/kill.sh; }" EXIT
+fi
+
 # Kill the running apps
-./scripts/kill.sh && echo "Killed some running apps" || echo "No apps were running"
+./scripts/kill.sh
 
 # Next run the `./runApps.sh` script to initialize Zipkin and the apps (check the `README` of `sleuth-documentation-apps` for Docker setup info)
 ./scripts/start_with_zipkin_server.sh
@@ -48,7 +52,3 @@ echo -e "\n\nReady to curl a request that will cause an exception"
 
 echo -e "\n\nRunning acceptance tests"
 ./scripts/run_acceptance_tests.sh
-
-if [[ "${KILL_AT_END}" == "yes" ]] ; then
-    ./scripts/kill.sh
-fi

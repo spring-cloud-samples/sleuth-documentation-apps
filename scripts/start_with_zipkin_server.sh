@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -o errexit
 
 RABBIT_PORT=${RABBIT_PORT:-9672}
 DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
@@ -26,7 +26,7 @@ mkdir -p build
 
 function check_app() {
     READY_FOR_TESTS="no"
-    curl_local_health_endpoint $1 && READY_FOR_TESTS="yes"
+    curl_local_health_endpoint $1 && READY_FOR_TESTS="yes" || echo "Failed to reach health endpoint"
     if [[ "${READY_FOR_TESTS}" == "no" ]] ; then
         echo "Failed to start service running at port $1"
         print_logs
@@ -45,7 +45,7 @@ function curl_health_endpoint() {
     local READY_FOR_TESTS=1
     for i in $( seq 1 "${RETRIES}" ); do
         sleep "${WAIT_TIME}"
-        curl -m 5 "${PASSED_HOST}:$1/health" && READY_FOR_TESTS=0 && break
+        curl --fail -m 5 "${PASSED_HOST}:$1/health" && READY_FOR_TESTS=0 && break || echo "Failed"
         echo "Fail #$i/${RETRIES}... will try again in [${WAIT_TIME}] seconds"
     done
     return ${READY_FOR_TESTS}
@@ -56,11 +56,10 @@ function kill_docker() {
     docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} || echo "No running docker containers are left"
 }
 
-trap "{ kill_docker;kill; }" EXIT
-
 # build apps
 ./gradlew clean && ./gradlew build --parallel
 
+<<<<<<< HEAD
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
     kill_docker
@@ -71,6 +70,13 @@ if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     sleep 10
 fi
 
+=======
+# run zipkin stuff
+kill_docker || echo "Failed to kill"
+docker-compose kill || echo "Failed to kill"
+docker-compose build
+docker-compose up -d
+>>>>>>> c80fe9e... Please work
 if [[ "${JAVA_HOME}" != "" ]]; then
   JAVA_BIN="${JAVA_HOME}/bin/java"
 else
@@ -90,6 +96,12 @@ else
 fi
 popd
 
+<<<<<<< HEAD
+=======
+echo -e "\nWaiting for 30 seconds for rabbit to work"
+sleep 30
+
+>>>>>>> c80fe9e... Please work
 echo -e "\nStarting Zipkin Server..."
 
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
