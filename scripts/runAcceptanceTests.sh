@@ -33,7 +33,7 @@ export -f print_logs
 export -f fail_with_message
 
 if [[ "${KILL_AT_END}" == "yes" ]] ; then
-    trap "{ ./scripts/kill.sh; }" EXIT
+    trap "{ ./scripts/kill.sh;docker ps -a -q | xargs -n 1 -P 8 -I {} docker rm --force {} || echo 'No docker containers running'; }" EXIT
 fi
 
 # Kill the running apps
