@@ -59,24 +59,14 @@ function kill_docker() {
 # build apps
 ./gradlew clean && ./gradlew build --parallel
 
-<<<<<<< HEAD
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
-    kill_docker
-    docker-compose kill
+    kill_docker || echo "Failed to kill"
+    docker-compose kill  || echo "Failed to kill"
     docker-compose pull
     docker-compose up -d
-    echo -e "\n\nWaiting for 10 seconds for rabbit to start"
-    sleep 10
 fi
 
-=======
-# run zipkin stuff
-kill_docker || echo "Failed to kill"
-docker-compose kill || echo "Failed to kill"
-docker-compose build
-docker-compose up -d
->>>>>>> c80fe9e... Please work
 if [[ "${JAVA_HOME}" != "" ]]; then
   JAVA_BIN="${JAVA_HOME}/bin/java"
 else
@@ -96,14 +86,10 @@ else
 fi
 popd
 
-<<<<<<< HEAD
-=======
 echo -e "\nWaiting for 30 seconds for rabbit to work"
 sleep 30
 
->>>>>>> c80fe9e... Please work
 echo -e "\nStarting Zipkin Server..."
-
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     echo "Will use rabbit to send spans"
     ZIPKIN_ARGS="-DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT}"
