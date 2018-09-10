@@ -56,6 +56,8 @@ function kill_docker() {
     docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} || echo "No running docker containers are left"
 }
 
+trap "{ kill_docker;kill; }" EXIT
+
 # build apps
 ./gradlew clean && ./gradlew build --parallel
 
