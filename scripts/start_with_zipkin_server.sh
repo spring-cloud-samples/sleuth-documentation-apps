@@ -48,10 +48,16 @@ function curl_health_endpoint() {
     return ${READY_FOR_TESTS}
 }
 
+# Kills all docker related elements
+function kill_docker() {
+    docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} || echo "No running docker containers are left"
+}
+
 # build apps
 ./gradlew clean && ./gradlew build --parallel
 
 # run zipkin stuff
+kill_docker
 docker-compose kill
 docker-compose build
 docker-compose up -d
