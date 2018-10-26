@@ -62,10 +62,10 @@ configure(subprojects) {
 			System.properties[propName] ?:
 					project.gradle.startParameter.systemPropertiesArgs.get(propName) ?:
 							hasProperty(propName) ? property(propName) :
-									System.getenv(propName) ?: ""
+									System.getenv(propName) ?: project.getProperty(propName) ?: ""
 		}
 		imports {
-			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${getProp("BOM_VERSION") ?: "Finchley.BUILD-SNAPSHOT"}"
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${getProp("BOM_VERSION")}"
 		}
 	}
 
