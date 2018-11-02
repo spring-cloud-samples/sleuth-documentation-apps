@@ -6,13 +6,7 @@ SERVICE3_PORT="${SERVICE3_PORT:-8083}"
 SERVICE4_PORT="${SERVICE4_PORT:-8084}"
 
 function kill_app_at_port() {
-  local port="${1}"
-  local process="$( netstat -tn 2>/dev/null | grep :${port} | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr | head )"
-  if [[ "${proces}" != "" ]]; then
-    kill -9 "${process}"
-  else
-    echo "No app running at port [${port}]"
-  fi
+  kill -9 $(lsof -t -i:$1) && echo "Killed an app running on port [$1]" || echo "No app running on port [$1]"
 }
 
 kill `jps | grep "1.0.0.SLEUTH_DOCS.jar" | cut -d " " -f 1` || echo "No apps running"
