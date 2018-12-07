@@ -61,7 +61,7 @@ function kill_docker() {
 
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
-    kill_docker || echo "Failed to kill"
+    #kill_docker || echo "Failed to kill"
     docker-compose kill  || echo "Failed to kill"
     docker-compose pull
     docker-compose up -d
