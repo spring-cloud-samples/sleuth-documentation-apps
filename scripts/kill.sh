@@ -16,6 +16,7 @@ echo "Running docker processes"
 docker ps
 
 kill `jps | grep "1.0.0.SLEUTH_DOCS.jar" | cut -d " " -f 1` || echo "No apps running"
+pkill -9 -f 1.0.0.SLEUTH_DOCS.jar || echo "Apps not running"
 kill `jps | grep "zipkin.jar" | cut -d " " -f 1` || echo "No zipkin running"
 kill_app_at_port ${SERVICE1_PORT} && echo "Killed app at port ${SERVICE1_PORT}" || echo "Failed to kill service"
 kill_app_at_port ${SERVICE2_PORT} && echo "Killed app at port ${SERVICE2_PORT}" || echo "Failed to kill service"
