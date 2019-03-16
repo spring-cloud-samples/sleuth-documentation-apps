@@ -3,16 +3,16 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven {
-            url "http://repo.spring.io/snapshot"
+            url "https://repo.spring.io/snapshot"
         }
         maven {
-            url "http://repo.spring.io/milestone"
+            url "https://repo.spring.io/milestone"
         }
         maven {
-            url "http://repo.spring.io/libs-release-local"
+            url "https://repo.spring.io/libs-release-local"
         }
         maven {
-            url "http://repo.spring.io/libs-staging-local/"
+            url "https://repo.spring.io/libs-staging-local/"
         }
     }
     dependencies {
@@ -46,16 +46,16 @@ configure(subprojects) {
         mavenLocal()
         jcenter()
         maven {
-            url "http://repo.spring.io/snapshot"
+            url "https://repo.spring.io/snapshot"
         }
         maven {
-            url "http://repo.spring.io/milestone"
+            url "https://repo.spring.io/milestone"
         }
         maven {
-            url "http://repo.spring.io/libs-release-local"
+            url "https://repo.spring.io/libs-release-local"
         }
         maven {
-            url "http://repo.spring.io/libs-staging-local/"
+            url "https://repo.spring.io/libs-staging-local/"
         }
     }
 
