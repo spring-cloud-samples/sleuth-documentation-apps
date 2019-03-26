@@ -2,7 +2,7 @@
 
 # Sleuth documentation apps
 
-[Apps used for the Sleuth documentation graphs](http://cloud.spring.io/spring-cloud-sleuth/spring-cloud-sleuth.html) . They're not using
+[Apps used for the Sleuth documentation graphs](https://cloud.spring.io/spring-cloud-sleuth/spring-cloud-sleuth.html) . They're not using
 service discovery so don't treat them as reference production applications ;)
 
 The apps are sending spans to Zipkin via RabbitMQ and `spring-cloud-sleuth-stream`.
