@@ -110,7 +110,7 @@ pushd build
 if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]; then
   echo -e "\nDownloading Zipkin Server"
   rm -rf zipkin.jar || echo "No zipkin.jar to remove"
-  curl -sSL https://zipkin.io/quickstart.sh | bash -s
+  curl -sSL https://zipkin.apache.org/quickstart.sh | bash -s
 else
   echo "Won't download zipkin - the [DOWNLOAD_ZIPKIN] switch is set to false"
 fi
