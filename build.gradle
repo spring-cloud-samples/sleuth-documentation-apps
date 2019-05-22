@@ -124,14 +124,15 @@ configure(project(":acceptance-tests")) {
 	}
 
 	dependencies {
-		compile "org.aspectj:aspectjrt:1.8.8"
+		compile "org.aspectj:aspectjrt"
 		compile "org.springframework.boot:spring-boot-starter-web"
 		compile 'org.codehaus.groovy:groovy-all'
 
+		// otherwise the tests fail
+		testCompile "org.springframework.boot:spring-boot-starter-actuator"
+
 		testCompile 'org.awaitility:awaitility:2.0.0'
 		testCompile "org.springframework.boot:spring-boot-starter-test"
-		testCompile "org.springframework:spring-web"
-		testCompile "org.springframework.boot:spring-boot-starter-web"
 		testCompile "org.springframework.cloud:spring-cloud-starter-sleuth"
 		testCompile "io.zipkin.java:zipkin:2.10.0"
 		testCompile('com.athaydes:spock-reports:1.2.13') {
