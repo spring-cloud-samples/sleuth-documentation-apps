@@ -149,8 +149,8 @@ echo -e "Zikpin server host is [${ZIPKIN_SERVER_HOST}]"
 echo -e "Running acceptance tests"
 
 cd $root
-export LOCAL_URL="http://${ZIPKIN_SERVER_HOST}"
+export LOCAL_URL="https://${ZIPKIN_SERVER_HOST}"
 export SERVICE1_ADDRESS="${SERVICE1_HOST}"
-./gradlew :acceptance-tests:acceptanceTests -DLOCAL_URL="http://${ZIPKIN_SERVER_HOST}" -Dservice1.address="${SERVICE1_HOST}" -Dzipkin.query.port=80 --stacktrace --no-daemon --configure-on-demand
+./gradlew :acceptance-tests:acceptanceTests -DLOCAL_URL="https://${ZIPKIN_SERVER_HOST}" -Dservice1.address="${SERVICE1_HOST}" -Dzipkin.query.port=80 --stacktrace --no-daemon --configure-on-demand
 
 # ======================================= TEST END   =======================================

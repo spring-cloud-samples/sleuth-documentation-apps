@@ -110,7 +110,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("http://$service1Url/start")
+		URI uri = URI.create("https://$service1Url/start")
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
@@ -121,7 +121,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("http://$service1Url/readtimeout")
+		URI uri = URI.create("https://$service1Url/readtimeout")
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
@@ -239,7 +239,7 @@ class MessageFlowSpec extends Specification {
 		String zipkinUrlFromEnvs = System.getenv('spring.zipkin.query.url')
 		if (zipkinUrlFromEnvs) {
 			zipkinUrlFromEnvs = zipkinUrlFromEnvs.split(" ")[0]
-			return "http://$zipkinUrlFromEnvs"
+			return "https://$zipkinUrlFromEnvs"
 		}
 		return zipkinUrlFromEnvs
 	}
