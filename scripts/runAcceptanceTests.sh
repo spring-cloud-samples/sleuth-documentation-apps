@@ -5,7 +5,7 @@ set -o errexit
 export CURRENT_DIR="$( pwd )"
 export KILL_AT_END="${KILL_AT_END:-yes}"
 # since 8081-8084 are often taken will bump those to 9081-9084
-export DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
+export DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-https://localhost}
 export SERVICE1_PORT="${SERVICE1_PORT:-9081}"
 export SERVICE1_ADDRESS="${SERVICE1_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE1_PORT}}"
 export SERVICE2_PORT="${SERVICE2_PORT:-9082}"
