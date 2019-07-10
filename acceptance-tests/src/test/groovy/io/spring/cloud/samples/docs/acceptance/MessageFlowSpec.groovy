@@ -110,7 +110,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("$service1Url/start")
+		URI uri = URI.create(wrapWithProtocolIfPresent("$service1Url/start"))
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
@@ -121,7 +121,7 @@ class MessageFlowSpec extends Specification {
 		HttpHeaders headers = new HttpHeaders()
 		headers.add(SPAN_ID_NAME, traceId)
 		headers.add(TRACE_ID_HEADER_NAME, traceId)
-		URI uri = URI.create("$service1Url/readtimeout")
+		URI uri = URI.create(wrapWithProtocolIfPresent("$service1Url/readtimeout"))
 		RequestEntity requestEntity = new RequestEntity<>(headers, HttpMethod.POST, uri)
 		log.info("Request with traceid [$traceId] to service1 [$requestEntity] is ready")
 		return requestEntity
@@ -226,7 +226,7 @@ class MessageFlowSpec extends Specification {
 
 	@CompileStatic
 	ResponseEntity<String> checkDependencies() {
-		URI uri = URI.create("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v2/dependencies?endTs=${System.currentTimeMillis()}")
+		URI uri = URI.create(wrapWithProtocolIfPresent("${wrapQueryWithProtocolIfPresent() ?: parsedZipkinQuery()}:${zipkinQueryPort}/api/v2/dependencies?endTs=${System.currentTimeMillis()}"))
 		HttpHeaders headers = new HttpHeaders()
 		log.info("Sending request to the Zipkin query service [$uri]. Checking the dependency graph")
 		return new ExceptionLoggingRestTemplate().exchange(
@@ -242,6 +242,15 @@ class MessageFlowSpec extends Specification {
 			return "https://$zipkinUrlFromEnvs"
 		}
 		return zipkinUrlFromEnvs
+	}
+	}
+
+	@CompileStatic
+	String wrapWithProtocolIfPresent(String url) {
+		if (!url.startsWith("http")) {
+			return "http://$url"
+		}
+		return url
 	}
 
 	@CompileStatic
