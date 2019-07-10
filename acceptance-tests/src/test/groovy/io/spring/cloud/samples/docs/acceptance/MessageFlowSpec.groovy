@@ -243,7 +243,6 @@ class MessageFlowSpec extends Specification {
 		}
 		return zipkinUrlFromEnvs
 	}
-	}
 
 	@CompileStatic
 	String wrapWithProtocolIfPresent(String url) {
