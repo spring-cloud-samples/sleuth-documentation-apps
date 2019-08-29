@@ -3,10 +3,10 @@ buildscript {
 		mavenLocal()
 		mavenCentral()
 		maven {
-			url "https://repo.spring.io/snapshot"
+			url "https://repo.spring.io/libs-snapshot-local"
 		}
 		maven {
-			url "https://repo.spring.io/milestone"
+			url "https://repo.spring.io/libs-milestone-local"
 		}
 		maven {
 			url "https://repo.spring.io/libs-release-local"
@@ -47,10 +47,10 @@ configure(subprojects) {
 		jcenter()
 		mavenCentral()
 		maven {
-			url "https://repo.spring.io/snapshot"
+			url "https://repo.spring.io/libs-snapshot-local"
 		}
 		maven {
-			url "https://repo.spring.io/milestone"
+			url "https://repo.spring.io/libs-milestone-local"
 		}
 		maven {
 			url "https://repo.spring.io/libs-release-local"
