@@ -69,10 +69,6 @@ configure(subprojects) {
 		}
 	}
 
-	wrapper {
-		gradleVersion '4.6'
-	}
-
 	bootRun {
 		jvmArgs = systemPropsFromGradle()
 	}
