@@ -3,7 +3,7 @@ applications:
   memory: 1024M
   instances: 1
   host: docssleuth-zipkin-server
-  path: build/zipkin.jar
+  path: target/zipkin.jar
   services:
     - docssleuth-rabbitmq
     - docssleuth-mysql

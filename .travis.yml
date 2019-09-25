@@ -9,4 +9,4 @@ before_script:
  - "export JAVA_OPTS=-Xmx256m"
 
 script:
-- ./gradlew clean build --parallel
+- ./mvnw clean install

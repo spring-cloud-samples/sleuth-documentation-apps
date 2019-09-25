@@ -5,8 +5,9 @@ set -e
 DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
 
 # build apps
-./gradlew acceptanceTests --parallel
+./mvnw clean install -Ptests
 
+mkdir -p build
 TESTS_PASSED="no"
 grep "Service1: Baggage for \[key\] is \[foo\]" build/service1.log &&
 grep "Service2: Baggage for \[key\] is \[foo\]" build/service2.log &&

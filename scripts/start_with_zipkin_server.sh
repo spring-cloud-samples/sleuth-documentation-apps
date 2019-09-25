@@ -22,7 +22,7 @@ DOWNLOAD_ZIPKIN="${DOWNLOAD_ZIPKIN:-true}"
 
 [[ -z "${MEM_ARGS}" ]] && MEM_ARGS="-Xmx128m -Xss1024k"
 
-mkdir -p build
+mkdir -p target
 
 function check_app() {
     READY_FOR_TESTS="no"
@@ -57,7 +57,7 @@ function kill_docker() {
 }
 
 # build apps
-./gradlew clean && ./gradlew build --parallel
+./mvnw clean install -Pnotests
 
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
@@ -73,10 +73,10 @@ else
   JAVA_BIN="java"
 fi
 
-# nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > build/zipkin-server.out &
+# nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > target/zipkin-server.out &
 pushd zipkin-server
-mkdir -p build
-cd build
+mkdir -p target
+cd target
 if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]; then
   echo -e "\nDownloading Zipkin Server"
   rm -rf zipkin.jar || echo "No zipkin.jar to remove"
@@ -97,13 +97,15 @@ else
     echo "Will use web to send spans"
     MEM_ARGS="${MEM_ARGS} -Dspring.zipkin.sender.type=WEB"
 fi
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} ${ZIPKIN_ARGS} -jar zipkin-server/build/zipkin.jar > build/zipkin.log &
+
+mkdir -p build
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} ${ZIPKIN_ARGS} -jar zipkin-server/target/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/build/libs/*.jar --server.port="${SERVICE1_PORT}"  > build/service1.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/build/libs/*.jar --server.port="${SERVICE2_PORT}"  > build/service2.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/build/libs/*.jar --server.port="${SERVICE3_PORT}"  > build/service3.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/build/libs/*.jar --server.port="${SERVICE4_PORT}"  > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}"  > build/service1.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}"  > build/service2.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}"  > build/service3.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}"  > build/service4.log &
 
 echo -e "\n\nChecking if Zipkin is alive"
 check_app ${ZIPKIN_PORT}

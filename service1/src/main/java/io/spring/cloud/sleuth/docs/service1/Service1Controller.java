@@ -2,6 +2,8 @@ package io.spring.cloud.sleuth.docs.service1;
 
 import java.time.LocalDateTime;
 
+import reactor.core.publisher.Mono;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +17,7 @@ public class Service1Controller {
 	}
 
 	@RequestMapping("/start")
-	public String start() throws InterruptedException {
+	public Mono<String> start() {
 		return this.service2Client.start();
 	}
 
