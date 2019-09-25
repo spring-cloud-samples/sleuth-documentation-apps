@@ -15,4 +15,4 @@ zipkin:
   store:
     type: mem
 
-logging.file: build/zipkin-server.log
+logging.file: target/zipkin-server.log

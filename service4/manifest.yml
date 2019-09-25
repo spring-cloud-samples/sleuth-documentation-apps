@@ -4,7 +4,7 @@ applications:
   memory: 1024M
   instances: 1
   host: docssleuth-service4
-  path: build/libs/service4-1.0.0.SLEUTH_DOCS.jar
+  path: target/service4-1.0.0.SLEUTH_DOCS.jar
   services:
     - docssleuth-rabbitmq
   env:

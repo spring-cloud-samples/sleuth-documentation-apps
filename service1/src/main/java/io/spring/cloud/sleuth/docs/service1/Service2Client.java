@@ -7,13 +7,13 @@ import brave.Tracer;
 import brave.propagation.ExtraFieldPropagation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.cloud.sleuth.annotation.SpanTag;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -36,7 +36,7 @@ class Service2Client {
 		this.tracer = tracer;
 	}
 
-	public String start() throws InterruptedException {
+	public Mono<String> start() {
 		log.info("Hello from service1. Setting baggage foo=>bar");
 		Span span = tracer.currentSpan();
 		String secretBaggage = ExtraFieldPropagation.get("baggage");
@@ -51,15 +51,13 @@ class Service2Client {
 		span.annotate("baggage_set");
 		span.tag(baggageKey, baggageValue);
 		log.info("Hello from service1. Calling service2");
-		String response = webClient.get()
+		return webClient.get()
 				.uri("http://" + serviceAddress + "/foo")
 				.exchange()
-				.block()
-				.bodyToMono(String.class).block();
-		Thread.sleep(100);
-		log.info("Got response from service2 [{}]", response);
-		log.info("Service1: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
-		return response;
+				.doOnSuccess(clientResponse -> {
+					log.info("Got response from service2 [{}]", clientResponse);
+					log.info("Service1: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
+				}).flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
 	}
 
 	@NewSpan("first_span")
@@ -77,7 +75,8 @@ class Service2Client {
 					.block();
 			log.info("Got response from service2 [{}]", response);
 			return response;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("Exception occurred while trying to send a request to service 2", e);
 			throw new RuntimeException(e);
 		}

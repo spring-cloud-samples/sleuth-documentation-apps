@@ -54,11 +54,8 @@ function reset(){
 
 # ======================================= BUILD START =======================================
 root=`pwd`
-./gradlew clean --parallel
-#echo -e "\n\nPrinting dependencies"
-#./gradlew allDeps
-echo -e "\n\nBuilding builds in parallel"
-./gradlew build --parallel --refresh-dependencies
+echo -e "\n\nRunning builds"
+./mvnw clean install -Pnotests
 
 # ======================================= BUILD END   =======================================
 
@@ -149,8 +146,7 @@ echo -e "Zikpin server host is [${ZIPKIN_SERVER_HOST}]"
 echo -e "Running acceptance tests"
 
 cd $root
-export LOCAL_URL="http://${ZIPKIN_SERVER_HOST}"
-export SERVICE1_ADDRESS="${SERVICE1_HOST}"
-./gradlew :acceptance-tests:acceptanceTests -DLOCAL_URL="http://${ZIPKIN_SERVER_HOST}" -Dservice1.address="${SERVICE1_HOST}" -Dzipkin.query.port=80 --stacktrace --no-daemon --configure-on-demand
-
+export LOCAL_URL="https://${ZIPKIN_SERVER_HOST}"
+export SERVICE1_ADDRESS="https://${SERVICE1_HOST}"
+./mvnw clean install -Ptests -DLOCAL_URL="https://${ZIPKIN_SERVER_HOST}" -Dservice1.address="${SERVICE1_ADDRESS}" -Dzipkin.query.port=443
 # ======================================= TEST END   =======================================

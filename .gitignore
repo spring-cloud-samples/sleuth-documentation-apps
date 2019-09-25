@@ -15,8 +15,10 @@ _site/
 *.log
 .gradle
 *.jar
+*/target/**
 */build/**
 *.class
+target/
 build/
 zipkin.jar
 zipkin.jar.asc
