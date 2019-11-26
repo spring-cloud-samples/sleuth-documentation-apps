@@ -12,8 +12,10 @@ import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.cloud.sleuth.annotation.SpanTag;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -57,28 +59,18 @@ class Service2Client {
 				.doOnSuccess(clientResponse -> {
 					log.info("Got response from service2 [{}]", clientResponse);
 					log.info("Service1: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
-				}).flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
+				})
+				.flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
 	}
 
 	@NewSpan("first_span")
-	String timeout(@SpanTag("someTag") String tag) {
-		try {
-			Thread.sleep(300);
-			log.info("Hello from service1. Calling service2 - should end up with read timeout");
-			String response = webClient.get()
-					.uri("http://" + serviceAddress + "/readtimeout")
-					.retrieve()
-					.onStatus(httpStatus -> httpStatus.isError(), clientResponse -> {
-						throw new IllegalStateException("Exception!");
-					})
-					.bodyToMono(String.class)
-					.block();
-			log.info("Got response from service2 [{}]", response);
-			return response;
-		}
-		catch (Exception e) {
-			log.error("Exception occurred while trying to send a request to service 2", e);
-			throw new RuntimeException(e);
-		}
+	Mono<String> timeout(@SpanTag("someTag") String tag) throws InterruptedException {
+		Thread.sleep(300);
+		log.info("Hello from service1. Calling service2 - should end up with read timeout");
+		return webClient.get()
+				.uri("http://" + serviceAddress + "/readtimeout")
+				.retrieve()
+				.onStatus(HttpStatus::is5xxServerError, ClientResponse::createException)
+				.bodyToMono(String.class);
 	}
 }

@@ -100,7 +100,7 @@ class MessageFlowSpec extends Specification {
 				ResponseEntity<String> service1Response = restTemplate().exchange(request, String)
 				log.info("Response from service1Response is [$service1Response]")
 				assert service1Response != null
-				assert service1Response.statusCode == HttpStatus.INTERNAL_SERVER_ERROR
+				assert service1Response.statusCode == HttpStatus.INTERNAL_SERVER_ERROR || service1Response.body.contains('''"status":500,"error":"Internal Server Error"''')
 			}
 		})
 	}

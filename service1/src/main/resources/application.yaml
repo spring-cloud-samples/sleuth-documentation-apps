@@ -3,9 +3,6 @@ spring:
   application:
     name: service1
   sleuth:
-    sampler:
-      probability: 1.0
-    # you have to explicitly provide baggage keys
     baggage-keys:
       - baggage
       - key

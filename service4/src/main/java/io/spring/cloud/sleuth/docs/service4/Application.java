@@ -21,7 +21,7 @@ public class Application {
 
 @RestController
 class Service4Controller {
-	private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private static final Logger log = LoggerFactory.getLogger(Service4Controller.class);
 
 	private final Tracer tracer;
 

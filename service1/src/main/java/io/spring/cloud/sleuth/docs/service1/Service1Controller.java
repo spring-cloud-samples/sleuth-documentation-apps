@@ -22,7 +22,7 @@ public class Service1Controller {
 	}
 
 	@RequestMapping("/readtimeout")
-	public String timeout() {
+	public Mono<String> timeout() throws InterruptedException {
 		return service2Client.timeout(LocalDateTime.now().toString());
 	}
 }
