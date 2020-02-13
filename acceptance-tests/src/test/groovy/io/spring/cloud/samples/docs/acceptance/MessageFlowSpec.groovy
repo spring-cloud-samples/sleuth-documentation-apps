@@ -78,7 +78,7 @@ class MessageFlowSpec extends Specification {
 	}
 
 	@CompileStatic
-	private request_sent_for_service1_with_traceId( RequestEntity request) {
+	private void request_sent_for_service1_with_traceId( RequestEntity request) {
 		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
 			@Override
 			void run() {
@@ -86,7 +86,7 @@ class MessageFlowSpec extends Specification {
 				log.info("Response from service1Response is [$service1Response]")
 				assert service1Response != null
 				assert service1Response.statusCode == HttpStatus.OK
-				assert service1Response.body == 'Hello from service2, response from service3 [Hello from service3] and from service4 [Hello from service4]'
+				assert service1Response.body.contains('Hello from service2, response from service3 [Hello from service3] and from service4 [Hello from service4]')
 				log.info("The Sleuth Docs apps are working! Let's be happy!")
 			}
 		})
