@@ -6,6 +6,8 @@ spring:
     baggage-keys:
       - baggage
       - key
+    log.slf4j.whitelisted-mdc-keys:
+      - key
 
 logging.level.org.springframework.cloud.sleuth: DEBUG
 

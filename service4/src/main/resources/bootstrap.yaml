@@ -1,3 +1,5 @@
 spring:
   application:
     name: service4
+
+logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-},%X{key:-}]"
