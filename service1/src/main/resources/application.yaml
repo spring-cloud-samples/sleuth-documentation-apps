@@ -3,11 +3,12 @@ spring:
   application:
     name: service1
   sleuth:
-    baggage-keys:
-      - baggage
-      - key
-    log.slf4j.whitelisted-mdc-keys:
-      - key
+    baggage:
+      remote-keys:
+        - baggage
+        - key
+      correlation-keys:
+        - key
 
 
 logging.level.org.springframework.cloud.sleuth: DEBUG

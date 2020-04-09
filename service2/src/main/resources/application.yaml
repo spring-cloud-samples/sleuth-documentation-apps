@@ -3,15 +3,16 @@ spring:
   application:
     name: service2
   sleuth:
-    baggage-keys:
-      - baggage
-      - key
-    log.slf4j.whitelisted-mdc-keys:
-      - key
+    baggage:
+      remote-keys:
+        - baggage
+        - key
+      correlation-keys:
+        - key
 
 logging.level.org.springframework.cloud.sleuth: DEBUG
 
 management.endpoints.web.base-path: /
 management.endpoints.web.exposure.include: "*"
 
-logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-},%X{key:-}]"
+logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{traceId:-},%X{spanId:-},%X{key:-}]"

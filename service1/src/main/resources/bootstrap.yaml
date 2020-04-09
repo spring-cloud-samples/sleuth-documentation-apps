@@ -2,4 +2,4 @@ spring:
   application:
     name: service1
 
-logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-},%X{key:-}]"
+logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{traceId:-},%X{spanId:-},%X{key:-}]"
