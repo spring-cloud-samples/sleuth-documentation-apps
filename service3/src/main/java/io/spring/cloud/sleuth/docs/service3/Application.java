@@ -1,6 +1,6 @@
 package io.spring.cloud.sleuth.docs.service3;
 
-import brave.propagation.ExtraFieldPropagation;
+import brave.baggage.BaggageField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +24,7 @@ class Service3Controller {
 	public String service3MethodInController() throws InterruptedException {
 		Thread.sleep(300);
 		log.info("Hello from service3");
-		log.info("Service3: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
+		log.info("Service3: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
 		return "Hello from service3";
 	}
 }

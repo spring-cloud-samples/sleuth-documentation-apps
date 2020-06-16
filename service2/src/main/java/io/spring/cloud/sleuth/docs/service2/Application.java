@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 
 import brave.Span;
 import brave.Tracer;
-import brave.propagation.ExtraFieldPropagation;
+import brave.baggage.BaggageField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,7 +84,7 @@ class Service2Controller {
 	@RequestMapping("/foo")
 	public String service2MethodInController() throws InterruptedException {
 		Thread.sleep(200);
-		log.info("Service2: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
+		log.info("Service2: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
 		log.info("Hello from service2. Calling service3 and then service4");
 		String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);
 		log.info("Got response from service3 [{}]", service3);

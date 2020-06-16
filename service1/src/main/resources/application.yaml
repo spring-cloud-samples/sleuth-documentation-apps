@@ -4,10 +4,10 @@ spring:
     name: service1
   sleuth:
     baggage:
-      remote-keys:
+      remote-fields:
         - baggage
         - key
-      correlation-keys:
+      correlation-fields:
         - key
 
 

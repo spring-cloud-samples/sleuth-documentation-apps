@@ -1,11 +1,10 @@
 package io.spring.cloud.sleuth.docs.service4;
 
-import java.lang.invoke.MethodHandles;
-
 import brave.Tracer;
-import brave.propagation.ExtraFieldPropagation;
+import brave.baggage.BaggageField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +32,7 @@ class Service4Controller {
 	public String service4MethodInController() throws InterruptedException {
 		Thread.sleep(400);
 		log.info("Hello from service4");
-		log.info("Service4: Baggage for [key] is [" +ExtraFieldPropagation.get("key") + "]");
+		log.info("Service4: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
 		return "Hello from service4";
 	}
 }

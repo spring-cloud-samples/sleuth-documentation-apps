@@ -4,10 +4,10 @@ spring:
     name: service4
   sleuth:
     baggage:
-      remote-keys:
+      remote-fields:
         - baggage
         - key
-      correlation-keys:
+      correlation-fields:
         - key
 
 logging.level.org.springframework.cloud.sleuth: DEBUG

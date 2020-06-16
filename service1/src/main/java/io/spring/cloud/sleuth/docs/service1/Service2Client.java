@@ -4,7 +4,7 @@ import java.lang.invoke.MethodHandles;
 
 import brave.Span;
 import brave.Tracer;
-import brave.propagation.ExtraFieldPropagation;
+import brave.baggage.BaggageField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -41,7 +41,8 @@ class Service2Client {
 	public Mono<String> start() {
 		log.info("Hello from service1. Setting baggage foo=>bar");
 		Span span = tracer.currentSpan();
-		String secretBaggage = ExtraFieldPropagation.get("baggage");
+		BaggageField secretBaggageField = BaggageField.getByName(span.context(), "baggage");
+		String secretBaggage = secretBaggageField.getValue();
 		log.info("Super secret baggage item for key [baggage] is [{}]", secretBaggage);
 		if (StringUtils.hasText(secretBaggage)) {
 			span.annotate("secret_baggage_received");
@@ -49,7 +50,8 @@ class Service2Client {
 		}
 		String baggageKey = "key";
 		String baggageValue = "foo";
-		ExtraFieldPropagation.set(baggageKey, baggageValue);
+		BaggageField baggageField = BaggageField.create(baggageKey);
+		baggageField.updateValue(baggageValue);
 		span.annotate("baggage_set");
 		span.tag(baggageKey, baggageValue);
 		log.info("Hello from service1. Calling service2");
@@ -58,7 +60,7 @@ class Service2Client {
 				.exchange()
 				.doOnSuccess(clientResponse -> {
 					log.info("Got response from service2 [{}]", clientResponse);
-					log.info("Service1: Baggage for [key] is [" + ExtraFieldPropagation.get("key") + "]");
+					log.info("Service1: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
 				})
 				.flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
 	}
