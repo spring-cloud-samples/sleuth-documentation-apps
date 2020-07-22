@@ -21,6 +21,7 @@ import groovy.util.logging.Slf4j
 import io.spring.cloud.samples.docs.acceptance.common.tech.ExceptionLoggingRestTemplate
 import io.spring.cloud.samples.docs.acceptance.common.tech.SpanUtil
 import io.spring.cloud.samples.docs.acceptance.common.tech.TestConfiguration
+import org.awaitility.core.ThrowingRunnable
 import zipkin2.Span
 import zipkin2.codec.SpanBytesDecoder
 
@@ -79,7 +80,7 @@ class MessageFlowSpec extends Specification {
 
 	@CompileStatic
 	private void request_sent_for_service1_with_traceId( RequestEntity request) {
-		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
+		await().pollInterval(1, SECONDS).atMost(60, SECONDS).untilAsserted(new ThrowingRunnable() {
 			@Override
 			void run() {
 				ResponseEntity<String> service1Response = restTemplate().exchange(request, String)
@@ -94,7 +95,7 @@ class MessageFlowSpec extends Specification {
 
 	@CompileStatic
 	private failing_request_sent_for_service1_with_traceId(RequestEntity request) {
-		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
+		await().pollInterval(1, SECONDS).atMost(60, SECONDS).untilAsserted(new ThrowingRunnable() {
 			@Override
 			void run() {
 				ResponseEntity<String> service1Response = restTemplate().exchange(request, String)
@@ -129,7 +130,7 @@ class MessageFlowSpec extends Specification {
 
 	@CompileStatic
 	void entry_for_trace_id_is_present_in_Zipkin(String traceId) {
-		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
+		await().pollInterval(1, SECONDS).atMost(60, SECONDS).untilAsserted(new ThrowingRunnable() {
 			@Override
 			void run() {
 				ResponseEntity<String> response = checkStateOfTheTraceId(traceId)
@@ -158,7 +159,7 @@ class MessageFlowSpec extends Specification {
 
 	@CompileStatic
 	void failed_entry_for_trace_id_is_present_in_Zipkin(String traceId) {
-		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
+		await().pollInterval(1, SECONDS).atMost(60, SECONDS).untilAsserted(new ThrowingRunnable() {
 			@Override
 			void run() {
 				ResponseEntity<String> response = checkStateOfTheTraceId(traceId)
@@ -204,7 +205,7 @@ class MessageFlowSpec extends Specification {
 	}
 
 	void dependency_graph_is_correct() {
-		await().pollInterval(1, SECONDS).atMost(60, SECONDS).until(new Runnable() {
+		await().pollInterval(1, SECONDS).atMost(60, SECONDS).untilAsserted(new ThrowingRunnable() {
 			@Override
 			void run() {
 				ResponseEntity<String> response = checkDependencies()
