@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/spring-cloud-samples/sleuth-documentation-apps.svg)](https://travis-ci.org/spring-cloud-samples/sleuth-documentation-apps)
+![Java CI with Maven](https://github.com/spring-cloud-samples/sleuth-documentation-apps/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 # Sleuth documentation apps
 
@@ -7,7 +7,7 @@ service discovery so don't treat them as reference production applications ;)
 
 The apps are sending spans to Zipkin via RabbitMQ and `spring-cloud-sleuth-stream`.
 
-# Running acceptance tests of CF
+# Running acceptance tests
 
 Run:
 
