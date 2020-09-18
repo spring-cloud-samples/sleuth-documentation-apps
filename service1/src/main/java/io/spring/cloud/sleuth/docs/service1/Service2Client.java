@@ -60,7 +60,7 @@ class Service2Client {
 				.exchange()
 				.doOnSuccess(clientResponse -> {
 					log.info("Got response from service2 [{}]", clientResponse);
-					log.info("Service1: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
+					log.info("Service1: Baggage for [key] is [" + BaggageField.getByName("key").getValue() + "]");
 				})
 				.flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
 	}

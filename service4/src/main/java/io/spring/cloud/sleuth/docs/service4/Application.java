@@ -32,7 +32,7 @@ class Service4Controller {
 	public String service4MethodInController() throws InterruptedException {
 		Thread.sleep(400);
 		log.info("Hello from service4");
-		log.info("Service4: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
+		log.info("Service4: Baggage for [key] is [" + BaggageField.getByName("key").getValue() + "]");
 		return "Hello from service4";
 	}
 }

@@ -24,7 +24,7 @@ class Service3Controller {
 	public String service3MethodInController() throws InterruptedException {
 		Thread.sleep(300);
 		log.info("Hello from service3");
-		log.info("Service3: Baggage for [key] is [" + BaggageField.getByName("key") + "]");
+		log.info("Service3: Baggage for [key] is [" + BaggageField.getByName("key").getValue() + "]");
 		return "Hello from service3";
 	}
 }
