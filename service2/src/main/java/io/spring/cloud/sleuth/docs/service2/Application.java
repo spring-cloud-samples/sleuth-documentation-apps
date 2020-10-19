@@ -3,14 +3,15 @@ package io.spring.cloud.sleuth.docs.service2;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import brave.Span;
-import brave.Tracer;
-import brave.baggage.BaggageField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.sleuth.api.Baggage;
+import org.springframework.cloud.sleuth.api.Span;
+import org.springframework.cloud.sleuth.api.Tracer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -84,7 +85,8 @@ class Service2Controller {
 	@RequestMapping("/foo")
 	public String service2MethodInController() throws InterruptedException {
 		Thread.sleep(200);
-		log.info("Service2: Baggage for [key] is [" + BaggageField.getByName("key").getValue() + "]");
+		Baggage baggage = this.tracer.getBaggage("key");
+		log.info("Service2: Baggage for [key] is [" + (baggage == null ? null : baggage.get()) + "]");
 		log.info("Hello from service2. Calling service3 and then service4");
 		String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);
 		log.info("Got response from service3 [{}]", service3);
@@ -97,7 +99,7 @@ class Service2Controller {
 	public String connectionTimeout() throws InterruptedException {
 		Span span = this.tracer.nextSpan().name("second_span");
 		Thread.sleep(500);
-		try (Tracer.SpanInScope ws = this.tracer.withSpanInScope(span)) {
+		try (Tracer.SpanInScope ws = this.tracer.withSpan(span)) {
 			log.info("Calling a missing service");
 			restTemplate.getForObject("http://localhost:" + port + "/blowup", String.class);
 			return "Should blow up";
@@ -105,7 +107,7 @@ class Service2Controller {
 			log.error("Exception occurred while trying to send a request to a missing service", e);
 			throw e;
 		} finally {
-			span.finish();
+			span.end();
 		}
 	}
 
