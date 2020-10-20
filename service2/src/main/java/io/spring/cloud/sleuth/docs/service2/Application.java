@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.sleuth.api.Baggage;
+import org.springframework.cloud.sleuth.api.BaggageEntry;
 import org.springframework.cloud.sleuth.api.Span;
 import org.springframework.cloud.sleuth.api.Tracer;
 import org.springframework.context.annotation.Bean;
@@ -85,7 +85,7 @@ class Service2Controller {
 	@RequestMapping("/foo")
 	public String service2MethodInController() throws InterruptedException {
 		Thread.sleep(200);
-		Baggage baggage = this.tracer.getBaggage("key");
+		BaggageEntry baggage = this.tracer.getBaggage("key");
 		log.info("Service2: Baggage for [key] is [" + (baggage == null ? null : baggage.get()) + "]");
 		log.info("Hello from service2. Calling service3 and then service4");
 		String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);

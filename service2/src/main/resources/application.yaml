@@ -3,6 +3,9 @@ spring:
   application:
     name: service2
   sleuth:
+    propagation:
+      type:
+        - w3c
     baggage:
       remote-fields:
         - baggage
