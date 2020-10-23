@@ -3,15 +3,20 @@ spring:
   application:
     name: service1
   sleuth:
+    propagation:
+      type:
+        - w3c
     baggage:
       remote-fields:
         - baggage
         - key
       correlation-fields:
         - key
+    otel:
+      config:
+        trace-id-ratio-based: 1.0
 
-
-logging.level.org.springframework.cloud.sleuth: DEBUG
+logging.level.org.springframework.cloud.sleuth: INFO
 
 management.endpoints.web.base-path: /
 management.endpoints.web.exposure.include: "*"

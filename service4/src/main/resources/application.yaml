@@ -3,12 +3,18 @@ spring:
   application:
     name: service4
   sleuth:
+    propagation:
+      type:
+        - w3c
     baggage:
       remote-fields:
         - baggage
         - key
       correlation-fields:
         - key
+    otel:
+      config:
+        trace-id-ratio-based: 1.0
 
 logging.level.org.springframework.cloud.sleuth: DEBUG
 

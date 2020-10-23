@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import reactor.core.publisher.Mono;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,12 +16,12 @@ public class Service1Controller {
 		this.service2Client = service2Client;
 	}
 
-	@RequestMapping("/start")
+	@GetMapping("/start")
 	public Mono<String> start() {
 		return this.service2Client.start();
 	}
 
-	@RequestMapping("/readtimeout")
+	@GetMapping("/readtimeout")
 	public Mono<String> timeout() throws InterruptedException {
 		return service2Client.timeout(LocalDateTime.now().toString());
 	}
