@@ -1,9 +1,9 @@
 package io.spring.cloud.sleuth.docs.service4;
 
-import io.opentelemetry.baggage.BaggageManager;
+import io.opentelemetry.api.baggage.Baggage;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.trace.Span;
-import io.opentelemetry.trace.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,21 +26,18 @@ class Service4Controller {
 
 	private final Tracer tracer;
 
-	private final BaggageManager baggageManager;
-
-	Service4Controller(Tracer tracer, BaggageManager baggageManager) {
+	Service4Controller(Tracer tracer) {
 		this.tracer = tracer;
-		this.baggageManager = baggageManager;
 	}
 
 	@RequestMapping("/baz")
 	public String service4MethodInController() throws InterruptedException {
 		Thread.sleep(400);
 		Span newSpan = this.tracer.spanBuilder("new_span").startSpan();
-		try (Scope scope = this.tracer.withSpan(newSpan)) {
+		try (Scope scope =  newSpan.makeCurrent()) {
 			log.info("Hello from service4");
+			log.info("Service4: Baggage for [key] is [" + Baggage.current().getEntryValue("key") + "]");
 		}
-		log.info("Service4: Baggage for [key] is [" + this.baggageManager.getCurrentBaggage().getEntryValue("key") + "]");
 		return "Hello from service4";
 	}
 }

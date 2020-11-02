@@ -5,6 +5,7 @@ spring:
   sleuth:
     propagation:
       type:
+        - b3
         - w3c
     baggage:
       remote-fields:
