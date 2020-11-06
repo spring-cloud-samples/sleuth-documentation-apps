@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.sleuth.api.BaggageEntry;
+import org.springframework.cloud.sleuth.api.BaggageInScope;
 import org.springframework.cloud.sleuth.api.Span;
 import org.springframework.cloud.sleuth.api.Tracer;
 import org.springframework.context.annotation.Bean;
@@ -33,20 +33,24 @@ public class Application {
 		clientHttpRequestFactory.setReadTimeout(3000);
 		RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
 		restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
-			@Override public boolean hasError(ClientHttpResponse response)
+			@Override
+			public boolean hasError(ClientHttpResponse response)
 					throws IOException {
 				try {
 					return super.hasError(response);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					return true;
 				}
 			}
 
-			@Override public void handleError(ClientHttpResponse response)
+			@Override
+			public void handleError(ClientHttpResponse response)
 					throws IOException {
 				try {
 					super.handleError(response);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					log.error("Exception [" + e.getMessage() + "] occurred while trying to send the request", e);
 					throw e;
 				}
@@ -85,14 +89,15 @@ class Service2Controller {
 	@RequestMapping("/foo")
 	public String service2MethodInController() throws InterruptedException {
 		Thread.sleep(200);
-		BaggageEntry baggage = this.tracer.getBaggage("key");
-		log.info("Service2: Baggage for [key] is [" + (baggage == null ? null : baggage.get()) + "]");
-		log.info("Hello from service2. Calling service3 and then service4");
-		String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);
-		log.info("Got response from service3 [{}]", service3);
-		String service4 = restTemplate.getForObject("http://" + serviceAddress4 + "/baz", String.class);
-		log.info("Got response from service4 [{}]", service4);
-		return String.format("Hello from service2, response from service3 [%s] and from service4 [%s]", service3, service4);
+		try (BaggageInScope baggage = this.tracer.getBaggage("key")) {
+			log.info("Service2: Baggage for [key] is [" + (baggage == null ? null : baggage.get()) + "]");
+			log.info("Hello from service2. Calling service3 and then service4");
+			String service3 = restTemplate.getForObject("http://" + serviceAddress3 + "/bar", String.class);
+			log.info("Got response from service3 [{}]", service3);
+			String service4 = restTemplate.getForObject("http://" + serviceAddress4 + "/baz", String.class);
+			log.info("Got response from service4 [{}]", service4);
+			return String.format("Hello from service2, response from service3 [%s] and from service4 [%s]", service3, service4);
+		}
 	}
 
 	@RequestMapping("/readtimeout")
@@ -103,10 +108,12 @@ class Service2Controller {
 			log.info("Calling a missing service");
 			restTemplate.getForObject("http://localhost:" + port + "/blowup", String.class);
 			return "Should blow up";
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			log.error("Exception occurred while trying to send a request to a missing service", e);
 			throw e;
-		} finally {
+		}
+		finally {
 			span.end();
 		}
 	}

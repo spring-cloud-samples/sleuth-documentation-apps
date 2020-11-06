@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.cloud.sleuth.annotation.SpanTag;
-import org.springframework.cloud.sleuth.api.BaggageEntry;
+import org.springframework.cloud.sleuth.api.BaggageInScope;
 import org.springframework.cloud.sleuth.api.Span;
 import org.springframework.cloud.sleuth.api.Tracer;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ class Service2Client {
 	public Mono<String> start() {
 		log.info("Hello from service1. Setting baggage foo=>bar");
 		Span span = tracer.currentSpan();
-		BaggageEntry secretBaggageField = this.tracer.getBaggage("baggage");
+		BaggageInScope secretBaggageField = this.tracer.getBaggage("baggage");
 		String secretBaggage = secretBaggageField != null ? secretBaggageField.get() : null;
 		log.info("Super secret baggage item for key [baggage] is [{}]", secretBaggage);
 		if (StringUtils.hasText(secretBaggage)) {
@@ -50,7 +50,7 @@ class Service2Client {
 		}
 		String baggageKey = "key";
 		String baggageValue = "foo";
-		BaggageEntry baggageField = this.tracer.createBaggage(baggageKey);
+		BaggageInScope baggageField = this.tracer.createBaggage(baggageKey);
 		baggageField.set(span.context(), baggageValue);
 		span.event("baggage_set");
 		span.tag(baggageKey, baggageValue);
@@ -60,10 +60,17 @@ class Service2Client {
 				.exchange()
 				.doOnSuccess(clientResponse -> {
 					log.info("Got response from service2 [{}]", clientResponse);
-					BaggageEntry baggage = this.tracer.getBaggage("key");
-					log.info("Service1: Baggage for [key] is [" + (baggage == null ? null : baggage.get()) + "]");
+					try (BaggageInScope bs = this.tracer.getBaggage("key")) {
+						log.info("Service1: Baggage for [key] is [" + (bs == null ? null : bs.get()) + "]");
+					}
 				})
-				.flatMap(clientResponse -> clientResponse.bodyToMono(String.class));
+				.flatMap(clientResponse -> clientResponse.bodyToMono(String.class))
+				.doOnTerminate(() -> {
+					if (secretBaggageField != null) {
+						secretBaggageField.close();
+					}
+					baggageField.close();
+				});
 	}
 
 	@NewSpan("first_span")

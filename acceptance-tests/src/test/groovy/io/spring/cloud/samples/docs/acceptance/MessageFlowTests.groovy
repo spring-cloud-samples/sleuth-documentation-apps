@@ -136,6 +136,7 @@ class MessageFlowTests {
 				log.info("Response from the Zipkin query service about the trace id [$response] for trace with id [$traceId]")
 				assert response.statusCode == HttpStatus.OK
 				assert response.hasBody()
+				log.info("Checking spans")
 				List<Span> spans = SpanBytesDecoder.JSON_V2.decodeList(response.body.bytes)
 				List<String> serviceNamesNotFoundInZipkin = serviceNamesNotFoundInZipkin(spans)
 				log.info("The following services were not found in Zipkin $serviceNamesNotFoundInZipkin")
@@ -169,9 +170,11 @@ class MessageFlowTests {
 				// we're checking if the latest annotation based functionality is working
 				Span foundSpan = spans.find {
 					it.name() == "first_span" && it.tags().find { it.key == "someTag" } &&
-							it.tags().find { it.key == "error" }
+							// Brave || Otel
+							it.tags().find { it.key == "error" } || it.annotations().find { it.value() == "exception" }
 				}
 				log.info("The following spans <{}> were found in Zipkin for the traceid <{}>", spans, traceId)
+				log.info("Span with name [first_span] found? [" + foundSpan + "]")
 				assert foundSpan != null
 				log.info("Zipkin tracing is working! Sleuth is working! Let's be happy!")
 			}
