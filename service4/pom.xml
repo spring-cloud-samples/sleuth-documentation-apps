@@ -33,14 +33,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth-otel</artifactId>
-			<scope>compile</scope>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
 			<exclusions>
 				<exclusion>
-					<artifactId>tomcat-annotations-api</artifactId>
-					<groupId>org.apache.tomcat</groupId>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-sleuth-brave</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-sleuth-otel</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
