@@ -15,6 +15,7 @@
 
 	<properties>
 		<spring-cloud.version>2020.0.0-SNAPSHOT</spring-cloud.version>
+		<spring-cloud-sleuth-otel.version>1.0.0-SNAPSHOT</spring-cloud-sleuth-otel.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -43,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-sleuth-otel</artifactId>
+			<artifactId>spring-cloud-sleuth-otel-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
@@ -117,6 +118,13 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>${spring-cloud.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+				<version>${spring-cloud-sleuth-otel.version}</version>
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
