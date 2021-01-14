@@ -14,6 +14,7 @@ export SERVICE3_PORT="${SERVICE3_PORT:-9083}"
 export SERVICE3_ADDRESS="${SERVICE3_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE3_PORT}}"
 export SERVICE4_PORT="${SERVICE4_PORT:-9084}"
 export SERVICE4_ADDRESS="${SERVICE4_ADDRESS:-${DEFAULT_HEALTH_HOST}:${SERVICE4_PORT}}"
+export REPORTING_SYSTEM="${REPORTING_SYSTEM:-zipkin}"
 
 echo -e "\n\nRunning apps on addresses:\nservice1: [${SERVICE1_ADDRESS}]\nservice2: [${SERVICE2_ADDRESS}]\nservice3: [${SERVICE3_ADDRESS}]\nservice4: [${SERVICE4_ADDRESS}]\n\n"
 
@@ -39,8 +40,16 @@ fi
 # Kill the running apps
 ./scripts/kill.sh
 
-# Next run the `./runApps.sh` script to initialize Zipkin and the apps (check the `README` of `sleuth-documentation-apps` for Docker setup info)
-./scripts/start_with_zipkin_server.sh
+echo "Running reporting system [${REPORTING_SYSTEM}]"
+
+if [[ "${REPORTING_SYSTEM}" == "zipkin" ]]; then
+  # Next run the `./runApps.sh` script to initialize Zipkin and the apps (check the `README` of `sleuth-documentation-apps` for Docker setup info)
+  ./scripts/start_with_zipkin_server.sh
+elif [[ "${REPORTING_SYSTEM}" == "wavefront" ]]; then
+  ./scripts/start_with_wavefront.sh
+else
+  fail_with_message "No matching reporting system"
+fi
 
 echo -e "\n\nReady to curl first request"
 
