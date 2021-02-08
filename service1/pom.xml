@@ -14,7 +14,7 @@
 	</parent>
 
 	<properties>
-		<spring-cloud.version>2020.0.1-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>2020.0.2-SNAPSHOT</spring-cloud.version>
 		<spring-cloud-sleuth-otel.version>1.0.0-SNAPSHOT</spring-cloud-sleuth-otel.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -164,6 +164,16 @@
 				<dependency>
 					<groupId>com.wavefront</groupId>
 					<artifactId>wavefront-spring-boot-starter</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+		<profile>
+			<id>logzio</id>
+			<dependencies>
+				<dependency>
+					<groupId>io.logz.logback</groupId>
+					<artifactId>logzio-logback-appender</artifactId>
+					<version>1.0.24</version>
 				</dependency>
 			</dependencies>
 		</profile>

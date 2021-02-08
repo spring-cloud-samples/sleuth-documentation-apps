@@ -55,8 +55,19 @@ function kill_docker() {
     docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} || echo "No running docker containers are left"
 }
 
-# build apps
-./mvnw clean install -Pnotests,wavefront
+export LOGZ_IO_API_TOKEN="${LOGZ_IO_API_TOKEN:-}"
+PROFILES="notests,wavefront"
+
+if [[ "${LOGZ_IO_API_TOKEN}" != "" ]]; then
+  echo "Logz io token present - will enable the logzio profile"
+  PROFILES="${PROFILES},logzio"
+  TOKENS="--spring.profiles.active=logzio"
+else
+  echo "Logz io token missing"
+  TOKENS="--spring.profiles.active=default"
+fi
+
+./mvnw clean install -P"${PROFILES}"
 
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
@@ -73,7 +84,7 @@ else
 fi
 
 export WAVEFRONT_API_TOKEN="${WAVEFRONT_API_TOKEN:-}"
-TOKENS="--management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://longboard.wavefront.com}"
+TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://longboard.wavefront.com}"
 
 echo -e "\nStarting the apps..."
 nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log &
