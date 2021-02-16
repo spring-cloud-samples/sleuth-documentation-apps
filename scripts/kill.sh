@@ -14,6 +14,7 @@ jps | grep "1.0.0.SLEUTH_DOCS.jar"
 
 echo "Running docker processes"
 docker ps
+docker ps -a -q | xargs -n 1 -P 8 -I {} docker rm --force {} || echo 'No docker containers running';
 
 kill `jps | grep "1.0.0.SLEUTH_DOCS.jar" | cut -d " " -f 1` || echo "No apps running"
 pkill -9 -f 1.0.0.SLEUTH_DOCS.jar || echo "Apps not running"
