@@ -104,7 +104,7 @@ class Service2Controller {
 	public String connectionTimeout() throws InterruptedException {
 		Span span = this.tracer.nextSpan().name("second_span");
 		Thread.sleep(500);
-		try (Tracer.SpanInScope ws = this.tracer.withSpan(span)) {
+		try (Tracer.SpanInScope ws = this.tracer.withSpan(span.start())) {
 			log.info("Calling a missing service");
 			restTemplate.getForObject("http://localhost:" + port + "/blowup", String.class);
 			return "Should blow up";
