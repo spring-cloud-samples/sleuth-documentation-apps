@@ -22,6 +22,7 @@
 		<profile>
 			<id>notests</id>
 			<modules>
+				<module>presentation-service</module>
 				<module>service1</module>
 				<module>service2</module>
 				<module>service3</module>
@@ -34,6 +35,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>presentation-service</module>
 				<module>service1</module>
 				<module>service2</module>
 				<module>service3</module>
