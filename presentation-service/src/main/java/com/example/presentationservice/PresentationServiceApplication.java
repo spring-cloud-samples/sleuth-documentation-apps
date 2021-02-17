@@ -35,8 +35,8 @@ class PresentationController {
 	}
 
 	@GetMapping("/")
-	String wjug() {
+	String start() {
 		log.info("HELLO FROM PRESENTATION-SERVICE");
-		return this.restTemplate.postForObject("http://localhost:9081/start", "", String.class);
+		return "PRESENTATION SERVICE: " + this.restTemplate.postForObject("http://localhost:9081/start", "", String.class);
 	}
 }
