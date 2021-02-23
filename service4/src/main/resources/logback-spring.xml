@@ -73,10 +73,10 @@
 		<appender name="LogzioLogbackAppender" class="io.logz.logback.LogzioLogbackAppender">
 			<token>${LOGZ_IO_API_TOKEN}</token>
 			<logzioUrl>https://listener.logz.io:8071</logzioUrl>
-			<logzioType>myType</logzioType>
 			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 				<level>INFO</level>
 			</filter>
+			<debug>true</debug>
 			<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
 				<providers>
 					<timestamp>

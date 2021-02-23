@@ -5,12 +5,28 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.spring.cloud.sleuth.docs</groupId>
-  	<artifactId>sleuth-documentation-apps-parent</artifactId>
+	<artifactId>sleuth-documentation-apps-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0.SLEUTH_DOCS</version>
 
 	<name>Sleuth Documentation Apps</name>
 	<description>Sleuth Documentation Apps</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>build</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
@@ -22,7 +38,6 @@
 		<profile>
 			<id>notests</id>
 			<modules>
-				<module>presentation-service</module>
 				<module>service1</module>
 				<module>service2</module>
 				<module>service3</module>
@@ -33,6 +48,19 @@
 			<id>all</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>service1</module>
+				<module>service2</module>
+				<module>service3</module>
+				<module>service4</module>
+				<module>acceptance-tests</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>ide</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
 				<module>presentation-service</module>

@@ -62,10 +62,13 @@ if [[ "${LOGZ_IO_API_TOKEN}" != "" ]]; then
   echo "Logz io token present - will enable the logzio profile"
   PROFILES="${PROFILES},logzio"
   TOKENS="--spring.profiles.active=logzio"
+  rm -rf /tmp/logzio-logback-queue/
 else
   echo "Logz io token missing"
   TOKENS="--spring.profiles.active=default"
 fi
+
+echo "Building the apps with profiles [${PROFILES}]"
 
 ./mvnw clean install -P"${PROFILES}"
 
@@ -84,13 +87,16 @@ else
 fi
 
 export WAVEFRONT_API_TOKEN="${WAVEFRONT_API_TOKEN:-}"
+echo "Will prepend the following runtime arguments [${TOKENS}]"
 TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://longboard.wavefront.com}"
 
+mkdir -p build
+
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}" ${TOKENS}  > build/service2.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}" ${TOKENS}  > build/service3.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}" ${TOKENS}  > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}" ${TOKENS}  > build/service2.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}" ${TOKENS}  > build/service3.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}" ${TOKENS}  > build/service4.log 2>&1 &
 
 echo -e "\n\nChecking if Service1 is alive"
 check_app ${SERVICE1_PORT}

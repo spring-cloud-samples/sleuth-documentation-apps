@@ -1,3 +1,0 @@
-spring.zipkin:
-    base-url: https://docssleuth-zipkin-server.cfapps.io
-    sender.type: web
