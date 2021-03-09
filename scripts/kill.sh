@@ -29,3 +29,5 @@ jps | grep "1.0.0.SLEUTH_DOCS.jar"
 
 echo "Running docker processes"
 docker ps
+
+rm -rf "${CURRENT_DIR}/build"
