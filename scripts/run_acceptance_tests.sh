@@ -4,8 +4,9 @@ set -e
 
 DEFAULT_HEALTH_HOST=${DEFAULT_HEALTH_HOST:-localhost}
 
-# build apps
-./mvnw clean install -Ptests
+if [[ "${REPORTING_SYSTEM}" == "zipkin" ]]; then
+  ./mvnw clean install -Ptests
+fi
 
 mkdir -p build
 TESTS_PASSED="no"

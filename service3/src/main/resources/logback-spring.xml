@@ -77,29 +77,6 @@
 				<level>INFO</level>
 			</filter>
 			<debug>true</debug>
-			<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-				<providers>
-					<timestamp>
-						<timeZone>UTC</timeZone>
-					</timestamp>
-					<pattern>
-						<pattern>
-							{
-							"timestamp": "@timestamp",
-							"severity": "%level",
-							"service": "${springAppName:-}",
-							"trace": "%X{traceId:-}",
-							"span": "%X{spanId:-}",
-							"baggage": "%X{key:-}",
-							"pid": "${PID:-}",
-							"thread": "%thread",
-							"class": "%logger{40}",
-							"rest": "%message"
-							}
-						</pattern>
-					</pattern>
-				</providers>
-			</encoder>
 		</appender>
 
 		<root level="info">

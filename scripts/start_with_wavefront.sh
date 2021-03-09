@@ -18,7 +18,6 @@ JAVA_PATH_TO_BIN="${JAVA_HOME}/bin/"
 if [[ -z "${JAVA_HOME}" ]] ; then
     JAVA_PATH_TO_BIN=""
 fi
-DOWNLOAD_ZIPKIN="${DOWNLOAD_ZIPKIN:-true}"
 
 [[ -z "${MEM_ARGS}" ]] && MEM_ARGS="-Xmx128m -Xss1024k"
 
@@ -56,8 +55,22 @@ function kill_docker() {
     docker ps -a -q | xargs -n 1 -P 8 -I {} docker stop {} || echo "No running docker containers are left"
 }
 
-# build apps
-./mvnw clean install -Pnotests
+export LOGZ_IO_API_TOKEN="${LOGZ_IO_API_TOKEN:-}"
+PROFILES="notests,wavefront"
+
+if [[ "${LOGZ_IO_API_TOKEN}" != "" ]]; then
+  echo "Logz io token present - will enable the logzio profile"
+  PROFILES="${PROFILES},logzio"
+  TOKENS="--spring.profiles.active=logzio"
+  rm -rf /tmp/logzio-logback-queue/
+else
+  echo "Logz io token missing"
+  TOKENS="--spring.profiles.active=default"
+fi
+
+echo "Building the apps with profiles [${PROFILES}]"
+
+./mvnw clean install -P"${PROFILES}"
 
 if [[ "${WITH_RABBIT}" == "yes" ]] ; then
     # run rabbit
@@ -73,42 +86,18 @@ else
   JAVA_BIN="java"
 fi
 
-# nohup ${JAVA_HOME}/bin/java ${DEFAULT_ARGS} ${MEM_ARGS} -jar zipkin-server/zipkin-server-*-exec.jar > target/zipkin-server.out &
-pushd zipkin-server
-mkdir -p target
-cd target
-if [[ "${DOWNLOAD_ZIPKIN}" == "true" ]]; then
-  echo -e "\nDownloading Zipkin Server"
-  rm -rf zipkin.jar || echo "No zipkin.jar to remove"
-  curl -sSL https://zipkin.io/quickstart.sh | bash -s
-else
-  echo "Won't download zipkin - the [DOWNLOAD_ZIPKIN] switch is set to false"
-fi
-popd
-
-echo -e "\nWaiting for 30 seconds for rabbit to work"
-sleep 30
-
-echo -e "\nStarting Zipkin Server..."
-if [[ "${WITH_RABBIT}" == "yes" ]] ; then
-    echo "Will use rabbit to send spans"
-    ZIPKIN_ARGS="-DRABBIT_ADDRESSES=${DEFAULT_HEALTH_HOST}:${RABBIT_PORT}"
-else
-    echo "Will use web to send spans"
-    MEM_ARGS="${MEM_ARGS} -Dspring.zipkin.sender.type=WEB"
-fi
+export WAVEFRONT_API_TOKEN="${WAVEFRONT_API_TOKEN:-}"
+echo "Will prepend the following runtime arguments [${TOKENS}]"
+TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://longboard.wavefront.com}"
 
 mkdir -p build
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} ${ZIPKIN_ARGS} -jar zipkin-server/target/zipkin.jar > build/zipkin.log &
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}"  > build/service1.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}"  > build/service2.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}"  > build/service3.log &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}"  > build/service4.log &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}" ${TOKENS}  > build/service2.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}" ${TOKENS}  > build/service3.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}" ${TOKENS}  > build/service4.log 2>&1 &
 
-echo -e "\n\nChecking if Zipkin is alive"
-check_app ${ZIPKIN_PORT}
 echo -e "\n\nChecking if Service1 is alive"
 check_app ${SERVICE1_PORT}
 echo -e "\n\nChecking if Service2 is alive"

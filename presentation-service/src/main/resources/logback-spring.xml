@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+	<springProperty scope="context" name="springAppName" source="spring.application.name"/>
+
+	<!-- Use shutdownHook so that we can close gracefully and finish the log drain -->
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+	<!-- Appender to log to console -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<!-- Minimum logging level to be presented in the console logs-->
+			<level>DEBUG</level>
+		</filter>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<appender name="LogzioLogbackAppender" class="io.logz.logback.LogzioLogbackAppender">
+		<token>${LOGZ_IO_API_TOKEN}</token>
+		<logzioUrl>https://listener.logz.io:8071</logzioUrl>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<timestamp>
+					<timeZone>UTC</timeZone>
+				</timestamp>
+				<pattern>
+					<pattern>
+						{
+						"timestamp": "@timestamp",
+						"severity": "%level",
+						"service": "${springAppName:-}",
+						"trace": "%X{traceId:-}",
+						"span": "%X{spanId:-}",
+						"baggage": "%X{key:-}",
+						"pid": "${PID:-}",
+						"thread": "%thread",
+						"class": "%logger{40}",
+						"rest": "%message"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+	</appender>
+
+	<root level="info">
+		<!-- IMPORTANT: make sure to include this line, otherwise the appender won't be used -->
+		<appender-ref ref="LogzioLogbackAppender"/>
+		<appender-ref ref="console"/>
+	</root>
+</configuration>

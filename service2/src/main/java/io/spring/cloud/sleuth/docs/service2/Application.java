@@ -15,6 +15,7 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -84,6 +85,12 @@ class Service2Controller {
 		this.serviceAddress3 = serviceAddress3;
 		this.serviceAddress4 = serviceAddress4;
 		this.port = port;
+	}
+
+	// for the tracing presentation
+	@GetMapping("/memeoverflow")
+	public String memeOverflow() throws InterruptedException {
+		throw new IllegalStateException("Meme overflow occurred");
 	}
 
 	@RequestMapping("/foo")
