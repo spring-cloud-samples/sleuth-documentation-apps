@@ -11,3 +11,5 @@ sdk use java 15.0.0.hs-adpt
 # Run with wavefront props from the command line
 
 ./mvnw spring-boot:run
+
+http :9876/
