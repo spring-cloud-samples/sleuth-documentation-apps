@@ -104,7 +104,7 @@
 		<profile>
 			<id>wavefront</id>
 			<properties>
-				<wavefront.version>2.1.1-SNAPSHOT</wavefront.version>
+				<wavefront.version>2.2.0-SNAPSHOT</wavefront.version>
 			</properties>
 			<dependencyManagement>
 				<dependencies>
