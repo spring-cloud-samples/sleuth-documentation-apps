@@ -93,10 +93,10 @@ TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_AP
 mkdir -p build
 
 echo -e "\nStarting the apps..."
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log 2>&1 &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --server.port="${SERVICE2_PORT}" ${TOKENS}  > build/service2.log 2>&1 &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --server.port="${SERVICE3_PORT}" ${TOKENS}  > build/service3.log 2>&1 &
-nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --server.port="${SERVICE4_PORT}" ${TOKENS}  > build/service4.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service1/target/*.jar --debug --server.port="${SERVICE1_PORT}" ${TOKENS} > build/service1.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service2/target/*.jar --debug --server.port="${SERVICE2_PORT}" ${TOKENS}  > build/service2.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service3/target/*.jar --debug --server.port="${SERVICE3_PORT}" ${TOKENS}  > build/service3.log 2>&1 &
+nohup ${JAVA_PATH_TO_BIN}java ${MEM_ARGS} -jar service4/target/*.jar --debug --server.port="${SERVICE4_PORT}" ${TOKENS}  > build/service4.log 2>&1 &
 
 echo -e "\n\nChecking if Service1 is alive"
 check_app ${SERVICE1_PORT}
