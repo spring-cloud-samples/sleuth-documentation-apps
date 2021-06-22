@@ -88,7 +88,7 @@ fi
 
 export WAVEFRONT_API_TOKEN="${WAVEFRONT_API_TOKEN:-}"
 echo "Will prepend the following runtime arguments [${TOKENS}]"
-TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://longboard.wavefront.com}"
+TOKENS="${TOKENS} --management.metrics.export.wavefront.api-token=${WAVEFRONT_API_TOKEN} --management.metrics.export.wavefront.uri=${WAVEFRONT_URI:-https://vmware.wavefront.com}"
 
 mkdir -p build
 
