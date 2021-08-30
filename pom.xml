@@ -48,6 +48,7 @@
 			</activation>
 			<modules>
 				<module>presentation-service</module>
+				<module>presentation-service-observability</module>
 				<module>service1</module>
 				<module>service2</module>
 				<module>service3</module>
