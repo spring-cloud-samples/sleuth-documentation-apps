@@ -4,7 +4,7 @@ set -e
 
 sdk use java 15.0.0.hs-adpt
 
-# Generate project with Sleuth, Wavefront, Web
+# Generate project with Sleuth, Wavefront, Web, Actuator
 # Add logback encoder, logz.io integration
 # Copy the properties and logback
 # Run without wavefront props
