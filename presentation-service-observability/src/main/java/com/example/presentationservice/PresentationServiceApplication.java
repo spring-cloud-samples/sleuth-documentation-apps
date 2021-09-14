@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.observability.event.Recorder;
 import org.springframework.core.observability.event.instant.InstantEvent;
-import org.springframework.core.observability.event.instant.InstantRecording;
 import org.springframework.core.observability.event.interval.IntervalEvent;
 import org.springframework.core.observability.event.interval.IntervalRecording;
 import org.springframework.core.observability.event.tag.Cardinality;
