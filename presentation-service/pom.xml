@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>io.logz.logback</groupId>
 			<artifactId>logzio-logback-appender</artifactId>
-			<version>1.0.26</version>
+			<version>1.0.27</version>
 		</dependency>
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
