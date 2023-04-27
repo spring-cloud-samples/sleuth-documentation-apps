@@ -15,7 +15,7 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
-		<spring-cloud.version>2021.0.6-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>2021.0.8-SNAPSHOT</spring-cloud.version>
 		<wavefront.version>2.2.1-SNAPSHOT</wavefront.version>
 	</properties>
 	<dependencies>
